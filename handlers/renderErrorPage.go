@@ -4,13 +4,14 @@ import (
 	"net/http"
 	"strconv"
 	"html/template"
+	"groupie-tracker/api"
 )
 
 
 func renderErrorPage(w http.ResponseWriter, errorText string, statusCode int){
 	w.WriteHeader(statusCode)
 
-	content := ErrorContent{
+	content := api.ErrorContent{
 		Message : errorText,
 		Code : strconv.Itoa(statusCode),
 	}

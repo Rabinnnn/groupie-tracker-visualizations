@@ -3,6 +3,7 @@ package handlers
 import (
 	"html/template"
 	"net/http"
+	"groupie-tracker/api"
 )
 
 // handle requests for index page (home page)
