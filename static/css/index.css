@@ -1,0 +1,154 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #fef7fc; 
+    color: #333; 
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Hero section */
+.hero-img {
+    position: relative;
+    height: 80vh;
+    width: 100%;
+    overflow: hidden;
+    background-image: url("../images/music.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-shadow: 0 0 23px 0 rgba(90, 90, 90, 0.8);
+}
+
+.hero-img::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../images/music.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.hero-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8); 
+    z-index: 1; 
+}
+
+.hero-text h1 {
+    font-size: 5em;
+    line-height: 1em;
+    margin-bottom: 20px; 
+
+    color: #fff; 
+}
+
+.discover-button {
+    background: linear-gradient(
+        to right, #5f9ef8, #8972e4, #f3659d
+    );
+    color: #fff; 
+    border: none;
+    padding: 10px 20px; 
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    border-radius: 5px;
+    margin-top: 100px; 
+    z-index: 1; 
+}
+
+.discover-button:hover {
+    background: linear-gradient(
+        to right, #4c75af, #6f63a0, #9c4668
+    );
+}
+
+
+#artistCards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.card {
+    width: 300px;
+    margin: 10px;
+    padding: 15px;
+    background-color: #FFFFFF; 
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.3s ease;
+    overflow: hidden; 
+}
+
+.card:hover {
+    background-color: #F2F2F2; 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05); 
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    transition: filter 0.3s ease-in-out; 
+}
+
+.card:hover img {
+    filter: blur(2px); /* Blur image slightly on hover */
+}
+
+.card .container {
+    text-align: center;
+}
+
+.card h4 {
+    font-weight: 900;
+    margin-bottom: 10px;
+    background: linear-gradient(
+        to right, #4c75af, #6f63a0, #9c4668
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient 3.5s linear infinite;
+    color: #fff;
+}
+
+a {
+    text-decoration: none;
+    color: #333; 
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 75%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 70%; }
+}
+
+@media (max-width: 768px) {
+    .hero-text h1 {
+        font-size: 3em; 
+    }
+    
+    .discover-button {
+        font-size: 1em; 
+        margin-top: 50px; 
+    }
+    
+    .card {
+        width: 250px; 
+    }
+}
