@@ -26,7 +26,7 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	temp, err := template.ParseFiles("static/templates/details.html")
+	temp, err := template.ParseFiles("static/templates/detailsPage.html")
 	if err !=nil {
 		renderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
 		return
