@@ -19,3 +19,12 @@ func GetArtists()([]Artist,error){
 	}
 	return artists, nil
 }
+
+func GetLength()(int, error){
+	artists, err := GetArtists()
+	if err != nil{
+		return 0, err
+	}
+
+	return len(artists), nil
+}
