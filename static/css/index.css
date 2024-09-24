@@ -4,7 +4,7 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #fef7fc; 
+    background-color: #fdfef7; 
     color: #333; 
     overflow-x: hidden; /* Prevent horizontal scroll */
 }
@@ -106,9 +106,10 @@ html, body {
     transition: filter 0.3s ease-in-out; 
 }
 
+/*
 .card:hover img {
-    filter: blur(2px); /* Blur image slightly on hover */
-}
+    filter: blur(2px); 
+} */
 
 .card .container {
     text-align: center;
@@ -152,3 +153,5 @@ a {
         width: 250px; 
     }
 }
+
+

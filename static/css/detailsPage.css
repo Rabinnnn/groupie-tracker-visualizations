@@ -6,7 +6,7 @@ html, body {
     font-family: Arial, sans-serif;
     overflow-x: hidden; 
     position: relative;
-    background-color: #fef7fc;
+    background-color: #2b2a2a;
 }
 
 body::before {
@@ -32,7 +32,7 @@ a {
 .details-container {
     background: rgba(255, 255, 255, 0.8);
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
     max-width: 800px;
     width: 90%;
     padding: 20px;
@@ -41,6 +41,23 @@ a {
     position: relative; 
     color: #000; 
     z-index: 1; 
+}
+
+.details-container:hover {
+    transition: box-shadow 3s ease, transform 2s ease; /* Smooth transition for the glow and optional scaling */
+   /* box-shadow: 0 4px 12px rgba(223, 221, 221, 0.1), 0 0 50px rgb(73, 253, 253); /* Add the glowing effect */
+    animation: glow 1.5s infinite alternate; /* Animation on hover */
+    /* transform: scale(1.02); */
+}
+
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 4px 12px rgba(223, 221, 221, 0.1), 0 0 50px rgb(19, 94, 94); /* Add the glowing effect */
+    }
+    100% {
+    box-shadow: 0 4px 12px rgba(223, 221, 221, 0.1), 0 0 50px rgb(27, 255, 255); /* Add the glowing effect */
+}
 }
 
 .details-container h1 {
