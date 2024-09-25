@@ -185,10 +185,20 @@ a {
 
 @media (max-width: 400px) {
     .home-button {
-        display: none; 
+        font-size: 0.5em; 
+        top: 5px; 
+        left: 5px; 
     }
 }
 
+@media (max-width: 390px) {
+    .home-button {
+        font-size: 0.4em; 
+        padding: 0px 0px;
+        top: 6px; 
+        left: 1px; 
+    }
+}
 .section ul li {
     color: #000;
 }
@@ -212,3 +222,42 @@ a {
 .home-button:hover {
     background-color: #b7b6b6;
 }
+
+
+
+
+@media (max-width: 600px) {
+    .details-container {
+        padding: 15px;
+    }
+
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .detail-title {
+        min-width: auto;
+        margin-bottom: 5px;
+    }
+
+    .collapsible {
+        font-size: 16px;
+    }
+
+    .home-button {
+        font-size: 1em; 
+        padding: 8px 16px; 
+        top: 15px; 
+        left: 10px; 
+    }
+}
+
+@media (max-width: 400px) {
+    .home-button {
+        font-size: 0.7em; 
+        top: 15px; 
+        left: 10px; 
+    }
+}
+
