@@ -6,7 +6,7 @@ import (
 	"text/template"
 )
 
-func DetailsHandler(w http.ResponseWriter, r *http.Request){
+func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		renderErrorPage(w, "Method Not Allowed!", http.StatusMethodNotAllowed)
 		return
@@ -15,25 +15,25 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request){
 	id := r.URL.Query().Get("id")
 	isValid := CheckId(id)
 
-	if !isValid{
+	if !isValid {
 		renderErrorPage(w, "Not Found!", http.StatusNotFound)
 		return
 	}
 
 	data, err := api.GetAllDetails(id)
-	if err != nil{
+	if err != nil {
 		renderErrorPage(w, "Internal Server Error!", http.StatusInternalServerError)
 		return
 	}
 
 	temp, err := template.ParseFiles("static/templates/detailsPage.html")
-	if err !=nil {
+	if err != nil {
 		renderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	err = temp.Execute(w, data)
-	if err != nil{
+	if err != nil {
 		renderErrorPage(w, "Internal Server error", http.StatusInternalServerError)
 		return
 	}

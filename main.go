@@ -1,13 +1,13 @@
 package main
 
-import(
+import (
 	"fmt"
-	"net/http"
 	"groupie-tracker/handlers"
 	"log"
+	"net/http"
 )
 
-func main(){
+func main() {
 	http.HandleFunc("/", handlers.IndexHandler)
 	http.HandleFunc("/details", handlers.DetailsHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))

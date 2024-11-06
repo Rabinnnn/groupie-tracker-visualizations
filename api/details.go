@@ -1,30 +1,31 @@
 package api
 
-import(
-	"net/http"
+import (
 	"encoding/json"
+	"groupie-tracker/fileio"
+	"net/http"
 )
 
-func GetLocation(id string)(Location, error){
+func GetLocation(id string) (Location, error) {
 	results, err := http.Get("https://groupietrackers.herokuapp.com/api/locations/" + id)
-	if err != nil{
+	if err != nil {
 		return Location{}, err
 	}
-	defer results.Body.Close()
+	defer fileio.Close(results.Body)
 
 	var data Location
-	if err := json.NewDecoder(results.Body).Decode(&data); err != nil{
+	if err := json.NewDecoder(results.Body).Decode(&data); err != nil {
 		return Location{}, err
 	}
 	return data, nil
 }
 
-func GetDates(id string)(Date, error){
+func GetDates(id string) (Date, error) {
 	results, err := http.Get("https://groupietrackers.herokuapp.com/api/dates/" + id)
-	if err != nil{
+	if err != nil {
 		return Date{}, err
 	}
-	defer results.Body.Close()
+	defer fileio.Close(results.Body)
 
 	var data Date
 	if err := json.NewDecoder(results.Body).Decode(&data); err != nil {
@@ -33,61 +34,60 @@ func GetDates(id string)(Date, error){
 	return data, nil
 }
 
-func GetRelations(id string)(Relations, error){
+func GetRelations(id string) (Relations, error) {
 	results, err := http.Get("https://groupietrackers.herokuapp.com/api/relation/" + id)
 	if err != nil {
 		return Relations{}, err
 	}
-	defer results.Body.Close()
+	defer fileio.Close(results.Body)
 
 	var data Relations
-	if err := json.NewDecoder(results.Body).Decode(&data); err != nil{
+	if err := json.NewDecoder(results.Body).Decode(&data); err != nil {
 		return Relations{}, err
 	}
 	return data, nil
 }
 
-func GetDetails(id string)(Details, error){
+func GetDetails(id string) (Details, error) {
 	results, err := http.Get("https://groupietrackers.herokuapp.com/api/artists/" + id)
-	if err != nil{
+	if err != nil {
 		return Details{}, err
 	}
-	defer results.Body.Close()
+	defer fileio.Close(results.Body)
 
 	var data Details
-	if err := json.NewDecoder(results.Body).Decode(&data); err != nil{
+	if err := json.NewDecoder(results.Body).Decode(&data); err != nil {
 		return Details{}, err
 	}
 	return data, nil
 }
 
-func GetAllDetails(id string)(AllDetails, error){
+func GetAllDetails(id string) (AllDetails, error) {
 	details, err := GetDetails(id)
-	if err != nil{
+	if err != nil {
 		return AllDetails{}, err
 	}
 
 	dates, err := GetDates(id)
-	if err != nil{
+	if err != nil {
 		return AllDetails{}, err
 	}
 
 	relations, err := GetRelations(id)
-	if err != nil{
+	if err != nil {
 		return AllDetails{}, err
 	}
 
 	location, err := GetLocation(id)
-	if err != nil{
+	if err != nil {
 		return AllDetails{}, err
 	}
 
 	data := AllDetails{
-		Details: details,
-		Dates: dates,
-		Location: location,
+		Details:   details,
+		Dates:     dates,
+		Location:  location,
 		Relations: relations,
-		
 	}
 	return data, nil
 }
