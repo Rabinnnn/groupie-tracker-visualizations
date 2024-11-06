@@ -1,23 +1,22 @@
 package handlers
 
-import(
-	"strconv"
+import (
 	"groupie-tracker/api"
+	"strconv"
 )
 
-
-func CheckId(id string)bool{
+func CheckId(id string) bool {
 	num, err := strconv.Atoi(id)
-	if err != nil{
+	if err != nil {
 		return false
 	}
 
 	allArtists, err := api.GetLength()
-	if err != nil{
+	if err != nil {
 		return false
 	}
 
-	if !(num > 0 && num <= allArtists){
+	if !(num > 0 && num <= allArtists) {
 		return false
 	}
 	return true

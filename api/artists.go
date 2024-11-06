@@ -1,14 +1,13 @@
 package api
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
 )
 
-
-func GetArtists()([]Artist,error){
+func GetArtists() ([]Artist, error) {
 	results, err := http.Get("https://groupietrackers.herokuapp.com/api/artists")
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	defer results.Body.Close()
@@ -20,9 +19,9 @@ func GetArtists()([]Artist,error){
 	return artists, nil
 }
 
-func GetLength()(int, error){
+func GetLength() (int, error) {
 	artists, err := GetArtists()
-	if err != nil{
+	if err != nil {
 		return 0, err
 	}
 
