@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"groupie-tracker/fileio"
 	"net/http"
 )
 
@@ -10,7 +11,7 @@ func GetArtists() ([]Artist, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer results.Body.Close()
+	defer fileio.Close(results.Body)
 
 	var artists []Artist
 	if err := json.NewDecoder(results.Body).Decode(&artists); err != nil {

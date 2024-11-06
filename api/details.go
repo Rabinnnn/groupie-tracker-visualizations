@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"groupie-tracker/fileio"
 	"net/http"
 )
 
@@ -10,7 +11,7 @@ func GetLocation(id string) (Location, error) {
 	if err != nil {
 		return Location{}, err
 	}
-	defer results.Body.Close()
+	defer fileio.Close(results.Body)
 
 	var data Location
 	if err := json.NewDecoder(results.Body).Decode(&data); err != nil {
@@ -24,7 +25,7 @@ func GetDates(id string) (Date, error) {
 	if err != nil {
 		return Date{}, err
 	}
-	defer results.Body.Close()
+	defer fileio.Close(results.Body)
 
 	var data Date
 	if err := json.NewDecoder(results.Body).Decode(&data); err != nil {
@@ -38,7 +39,7 @@ func GetRelations(id string) (Relations, error) {
 	if err != nil {
 		return Relations{}, err
 	}
-	defer results.Body.Close()
+	defer fileio.Close(results.Body)
 
 	var data Relations
 	if err := json.NewDecoder(results.Body).Decode(&data); err != nil {
@@ -52,7 +53,7 @@ func GetDetails(id string) (Details, error) {
 	if err != nil {
 		return Details{}, err
 	}
-	defer results.Body.Close()
+	defer fileio.Close(results.Body)
 
 	var data Details
 	if err := json.NewDecoder(results.Body).Decode(&data); err != nil {
