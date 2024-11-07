@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"groupie-tracker/fileio"
+	"groupie-tracker/xerrors"
 	"net/http"
 )
 
@@ -151,6 +152,8 @@ func GetDetails(id string) (Details, error) {
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/artists/" + id)
 	if err != nil {
 		return Details{}, err
+	} else if resp.StatusCode == 404 {
+		return Details{}, xerrors.ErrNotFound
 	}
 	defer fileio.Close(resp.Body)
 
