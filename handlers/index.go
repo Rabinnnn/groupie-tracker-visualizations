@@ -4,6 +4,7 @@ import (
 	"groupie-tracker/api"
 	"html/template"
 	"net/http"
+	"path/filepath"
 )
 
 // IndexHandler handles HTTP GET requests for the main index page.
@@ -44,7 +45,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	temp, err := template.ParseFiles("static/templates/index.html")
+	temp, err := template.ParseFiles(filepath.Join(templatesDir, "index.html"))
 	if err != nil {
 		renderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
 		return

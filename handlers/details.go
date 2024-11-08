@@ -4,7 +4,9 @@ import (
 	"errors"
 	"groupie-tracker/api"
 	"groupie-tracker/xerrors"
+	"log"
 	"net/http"
+	"path/filepath"
 	"text/template"
 )
 
@@ -40,15 +42,18 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
 	data, err := api.GetAllDetails(id)
+	log.Printf("Found err: %v\n", err)
 	if errors.Is(err, xerrors.ErrNotFound) {
 		renderErrorPage(w, "Not Found!", http.StatusNotFound)
+		log.Printf("Error is NOT Found: %v\n", err)
 		return
 	} else if err != nil {
 		renderErrorPage(w, "Internal Server Error!", http.StatusInternalServerError)
+		log.Printf("Bad Result: Error is noooot NOT Found: %v\n", err)
 		return
 	}
 
-	temp, err := template.ParseFiles("static/templates/detailsPage.html")
+	temp, err := template.ParseFiles(filepath.Join(templatesDir, "detailsPage.html"))
 	if err != nil {
 		renderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
 		return

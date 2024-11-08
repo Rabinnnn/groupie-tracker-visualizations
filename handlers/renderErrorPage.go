@@ -4,6 +4,7 @@ import (
 	"groupie-tracker/api"
 	"html/template"
 	"net/http"
+	"path/filepath"
 	"strconv"
 )
 
@@ -29,7 +30,7 @@ func renderErrorPage(w http.ResponseWriter, errorText string, statusCode int) {
 		Code:    strconv.Itoa(statusCode),
 	}
 
-	temp, err := template.ParseFiles("static/templates/errorPage.html")
+	temp, err := template.ParseFiles(filepath.Join(templatesDir, "errorPage.html"))
 	if err != nil {
 		http.Error(w, "Internal Server Error!", http.StatusInternalServerError)
 		return

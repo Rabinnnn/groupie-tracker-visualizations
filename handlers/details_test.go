@@ -3,8 +3,16 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	// During tests, the templates dir is in the parent directory
+	templatesDir = filepath.Join("..", "templates")
+	os.Exit(m.Run())
+}
 
 func TestDetailsHandler(t *testing.T) {
 	tests := []struct {
