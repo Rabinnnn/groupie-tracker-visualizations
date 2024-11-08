@@ -174,7 +174,7 @@ func GetDetails(id string) (Details, error) {
 
 	var data Details
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		return Details{}, err
+		return Details{}, xerrors.ErrNotFound
 	}
 	return data, nil
 }
