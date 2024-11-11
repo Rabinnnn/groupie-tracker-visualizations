@@ -104,3 +104,20 @@ func TestIndexHandlerIntegration(t *testing.T) {
 		}
 	}
 }
+
+func TestIndexHandlerNoTemplates(t *testing.T) {
+	originalTemplateDir := templatesDir
+	templatesDir = ""
+	defer func() {
+		templatesDir = originalTemplateDir
+	}()
+
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+
+	IndexHandler(w, req)
+
+	if w.Code != http.StatusInternalServerError {
+		t.Errorf("Expected status %v; got %v", http.StatusInternalServerError, w.Code)
+	}
+}

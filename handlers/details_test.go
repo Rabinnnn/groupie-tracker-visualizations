@@ -102,3 +102,25 @@ func TestDetailsHandlerIntegration(t *testing.T) {
 		t.Error("Expected non-empty response body")
 	}
 }
+
+func TestDetailsHandlerNoTemplates(t *testing.T) {
+	originalTemplateDir := templatesDir
+	templatesDir = ""
+	defer func() {
+		templatesDir = originalTemplateDir
+	}()
+
+	req := httptest.NewRequest("GET", "/details?id=1", nil)
+	w := httptest.NewRecorder()
+
+	DetailsHandler(w, req)
+
+	if w.Code != http.StatusInternalServerError {
+		t.Errorf("Expected status OK; got %v", w.Code)
+	}
+
+	// Check if response contains expected HTML elements
+	if w.Body.Len() == 0 {
+		t.Error("Expected non-empty response body")
+	}
+}
