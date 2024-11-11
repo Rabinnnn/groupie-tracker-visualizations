@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"groupie-tracker/fileio"
 	"groupie-tracker/xerrors"
 	"net/http"
@@ -35,6 +36,10 @@ func GetLocation(id string) (Location, error) {
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/locations/" + id)
 	if err != nil {
 		return Location{}, err
+	} else if resp.StatusCode == 404 {
+		return Location{}, xerrors.ErrNotFound
+	} else if resp.StatusCode != 200 {
+		return Location{}, fmt.Errorf("invalid status code: %d", resp.StatusCode)
 	}
 	defer fileio.Close(resp.Body)
 
@@ -73,6 +78,10 @@ func GetDates(id string) (Date, error) {
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/dates/" + id)
 	if err != nil {
 		return Date{}, err
+	} else if resp.StatusCode == 404 {
+		return Date{}, xerrors.ErrNotFound
+	} else if resp.StatusCode != 200 {
+		return Date{}, fmt.Errorf("invalid status code: %d", resp.StatusCode)
 	}
 	defer fileio.Close(resp.Body)
 
@@ -113,6 +122,10 @@ func GetRelations(id string) (Relations, error) {
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/relation/" + id)
 	if err != nil {
 		return Relations{}, err
+	} else if resp.StatusCode == 404 {
+		return Relations{}, xerrors.ErrNotFound
+	} else if resp.StatusCode != 200 {
+		return Relations{}, fmt.Errorf("invalid status code: %d", resp.StatusCode)
 	}
 	defer fileio.Close(resp.Body)
 
@@ -154,12 +167,16 @@ func GetDetails(id string) (Details, error) {
 		return Details{}, err
 	} else if resp.StatusCode == 404 {
 		return Details{}, xerrors.ErrNotFound
+	} else if resp.StatusCode != 200 {
+		return Details{}, fmt.Errorf("invalid status code: %d", resp.StatusCode)
 	}
 	defer fileio.Close(resp.Body)
 
 	var data Details
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		return Details{}, err
+		return Details{}, xerrors.ErrNotFound
+	} else if data.ID == 0 {
+		return Details{}, xerrors.ErrNotFound
 	}
 	return data, nil
 }

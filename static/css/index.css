@@ -15,7 +15,7 @@ html, body {
     height: 80vh;
     width: 100%;
     overflow: hidden;
-    background-image: url("../images/music.jpg");
+    background-image: url("/static/images/music.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -29,7 +29,7 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("../images/music.jpg");
+    background-image: url("/static/images/music.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
