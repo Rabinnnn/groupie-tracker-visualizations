@@ -14,7 +14,7 @@ func Test_renderErrorPage(t *testing.T) {
 
 	mockHandler := func(arg args) func(w http.ResponseWriter, r *http.Request) {
 		return func(w http.ResponseWriter, r *http.Request) {
-			renderErrorPage(w, arg.errorText, arg.statusCode)
+			RenderErrorPage(w, arg.errorText, arg.statusCode)
 		}
 	}
 

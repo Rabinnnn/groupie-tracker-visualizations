@@ -30,30 +30,30 @@ import (
 //   - 500 Internal Server Error: Server-side processing errors
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
-		renderErrorPage(w, "Method Not Allowed!", http.StatusMethodNotAllowed)
+		RenderErrorPage(w, "Method Not Allowed!", http.StatusMethodNotAllowed)
 		return
 	}
 
 	if r.URL.Path != "/" {
-		renderErrorPage(w, "Page Not Found!", http.StatusNotFound)
+		RenderErrorPage(w, "Page Not Found!", http.StatusNotFound)
 		return
 	}
 
 	artists, err := api.GetArtists()
 	if err != nil {
-		renderErrorPage(w, "Internal Server Error!", http.StatusInternalServerError)
+		RenderErrorPage(w, "Internal Server Error!", http.StatusInternalServerError)
 		return
 	}
 
 	temp, err := template.ParseFiles(filepath.Join(templatesDir, "index.html"))
 	if err != nil {
-		renderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
+		RenderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	err = temp.Execute(w, artists)
 	if err != nil {
-		renderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
+		RenderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 }

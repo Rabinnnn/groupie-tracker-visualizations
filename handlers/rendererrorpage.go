@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-// renderErrorPage renders an HTML error page with the provided error message and HTTP status code.
+// RenderErrorPage renders an HTML error page with the provided error message and HTTP status code.
 //
 // Parameters:
 //   - w http.ResponseWriter: The response writer to send the rendered HTML page
@@ -22,8 +22,8 @@ import (
 //
 // Example usage:
 //
-//	renderErrorPage(w, "Resource not found", http.StatusNotFound)
-func renderErrorPage(w http.ResponseWriter, errorText string, statusCode int) {
+//	RenderErrorPage(w, "Resource not found", http.StatusNotFound)
+func RenderErrorPage(w http.ResponseWriter, errorText string, statusCode int) {
 	w.WriteHeader(statusCode)
 
 	content := api.ErrorContent{
