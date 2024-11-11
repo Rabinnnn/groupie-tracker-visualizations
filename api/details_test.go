@@ -151,6 +151,13 @@ func TestGetDates(t *testing.T) {
 			mockStatus:   http.StatusNotFound,
 			expectError:  false,
 		},
+		{
+			name:         "Non-existent user ID",
+			id:           "99999999999999",
+			mockResponse: Date{},
+			mockStatus:   http.StatusNotFound,
+			expectError:  false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -475,7 +482,7 @@ func TestGetDetails(t *testing.T) {
 			id:           "invalid",
 			mockResponse: Details{},
 			mockStatus:   http.StatusNotFound,
-			expectError:  false,
+			expectError:  true,
 		},
 	}
 
