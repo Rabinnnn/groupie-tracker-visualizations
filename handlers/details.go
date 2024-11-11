@@ -56,12 +56,14 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 	temp, err := template.ParseFiles(filepath.Join(templatesDir, "detailsPage.html"))
 	if err != nil {
 		renderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Printf("Error parsing template: %v\n", err)
 		return
 	}
 
 	err = temp.Execute(w, data)
 	if err != nil {
 		renderErrorPage(w, "Internal Server error", http.StatusInternalServerError)
+		log.Printf("Error executing template: %v\n", err)
 		return
 	}
 

@@ -3,6 +3,7 @@ package handlers
 import (
 	"groupie-tracker/api"
 	"html/template"
+	"log"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -33,13 +34,14 @@ func renderErrorPage(w http.ResponseWriter, errorText string, statusCode int) {
 	temp, err := template.ParseFiles(filepath.Join(templatesDir, "errorPage.html"))
 	if err != nil {
 		http.Error(w, "Internal Server Error!", http.StatusInternalServerError)
+		log.Printf("Error parsing templates: %v", err)
 		return
 	}
 
 	err = temp.Execute(w, content)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Printf("Error executing template: %v", err)
 		return
 	}
-
 }
