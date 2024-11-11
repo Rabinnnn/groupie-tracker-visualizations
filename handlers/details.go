@@ -36,7 +36,7 @@ import (
 //   - 500 Internal Server Error: Server-side processing errors
 func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
-		renderErrorPage(w, "Method Not Allowed!", http.StatusMethodNotAllowed)
+		RenderErrorPage(w, "Method Not Allowed!", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -44,25 +44,25 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 	data, err := api.GetAllDetails(id)
 	log.Printf("Found err: %v\n", err)
 	if errors.Is(err, xerrors.ErrNotFound) {
-		renderErrorPage(w, "Not Found!", http.StatusNotFound)
+		RenderErrorPage(w, "Not Found!", http.StatusNotFound)
 		log.Printf("Error is NOT Found: %v\n", err)
 		return
 	} else if err != nil {
-		renderErrorPage(w, "Internal Server Error!", http.StatusInternalServerError)
+		RenderErrorPage(w, "Internal Server Error!", http.StatusInternalServerError)
 		log.Printf("Bad Result: Error is noooot NOT Found: %v\n", err)
 		return
 	}
 
 	temp, err := template.ParseFiles(filepath.Join(templatesDir, "detailsPage.html"))
 	if err != nil {
-		renderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
+		RenderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
 		log.Printf("Error parsing template: %v\n", err)
 		return
 	}
 
 	err = temp.Execute(w, data)
 	if err != nil {
-		renderErrorPage(w, "Internal Server error", http.StatusInternalServerError)
+		RenderErrorPage(w, "Internal Server error", http.StatusInternalServerError)
 		log.Printf("Error executing template: %v\n", err)
 		return
 	}
