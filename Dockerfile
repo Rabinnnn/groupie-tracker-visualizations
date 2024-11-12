@@ -8,7 +8,8 @@ COPY go.mod ./
 RUN go mod download && go mod verify
 
 COPY . .
-RUN go build -v -o /usr/local/bin/app ./...
+RUN go build -o app
+RUN cp app /usr/bin
 
 EXPOSE 8080
 
