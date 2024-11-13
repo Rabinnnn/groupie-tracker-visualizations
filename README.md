@@ -29,7 +29,7 @@ To run the Groupie Tracker application, follow these steps:
 
 1. **Clone the Repository**:
     ```shell
-    git clone https://github.com/yourusername/groupie-tracker.git
+    git clone https://learn.zone01kisumu.ke/git/najwang/groupie-tracker.git
     cd groupie-tracker
     ```
 2. **Run the Backend**:
