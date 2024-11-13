@@ -15,6 +15,8 @@ import (
 var port = flag.Int("P", 8080, "port to listen on")
 
 func main() {
+	// parse the defined command-line flags
+	flag.Parse()
 	// configure file logging to temporary application logger file
 	{
 		logFilePath := path.Join(os.TempDir(), fmt.Sprintf("%d-groupie-logger.log", os.Getpid()))
