@@ -6,6 +6,7 @@ import (
 	"groupie-tracker/fileio"
 	"groupie-tracker/xerrors"
 	"net/http"
+	"sync"
 )
 
 // GetLocation retrieves location data for a specific artist from the groupietrackers API.
@@ -228,26 +229,38 @@ func GetAllDetails(id string) (AllDetails, error) {
 		return AllDetails{}, err
 	}
 
-	dates, err := GetDates(id)
-	if err != nil {
-		return AllDetails{}, err
-	}
-
-	relations, err := GetRelations(id)
-	if err != nil {
-		return AllDetails{}, err
-	}
-
-	location, err := GetLocation(id)
-	if err != nil {
-		return AllDetails{}, err
-	}
-
 	data := AllDetails{
-		Details:   details,
-		Dates:     dates,
-		Location:  location,
-		Relations: relations,
+		Details: details,
 	}
+
+	// Speed up the other fetch with goroutines
+	wg := sync.WaitGroup{}
+	var errs = [3]error{}
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		data.Dates, errs[0] = GetDates(id)
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		data.Relations, errs[1] = GetRelations(id)
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		data.Location, errs[2] = GetLocation(id)
+	}()
+
+	wg.Wait()
+	for _, err := range errs {
+		if err != nil {
+			return AllDetails{}, err
+		}
+	}
+
 	return data, nil
 }
