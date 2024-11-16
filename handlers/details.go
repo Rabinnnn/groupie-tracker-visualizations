@@ -35,6 +35,7 @@ import (
 //   - 404 Not Found: Invalid or non-existent artist ID
 //   - 500 Internal Server Error: Server-side processing errors
 func DetailsHandler(w http.ResponseWriter, r *http.Request) {
+	handlerTemplate := "detailsPage.html"
 	if r.Method != "GET" {
 		RenderErrorPage(w, "Method Not Allowed!", http.StatusMethodNotAllowed)
 		return
@@ -53,7 +54,14 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	temp, err := template.ParseFiles(filepath.Join(templatesDir, "detailsPage.html"))
+	// Define an add function for the Go templates
+	funcMap := template.FuncMap{
+		"add": func(a, b int) int {
+			return a + b
+		},
+	}
+
+	temp, err := template.New(handlerTemplate).Funcs(funcMap).ParseFiles(filepath.Join(templatesDir, handlerTemplate))
 	if err != nil {
 		RenderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
 		log.Printf("Error parsing template: %v\n", err)
@@ -66,5 +74,4 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error executing template: %v\n", err)
 		return
 	}
-
 }

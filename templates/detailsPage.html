@@ -71,9 +71,14 @@
         <div class="content">
             <ul>
                 {{range $location, $dates := .Relations.DatesLocation}}
-                <li>{{$location}}: {{range $dates}}{{.}}{{end}}</li>
+                <li>{{$location}}:
+                    {{range $i, $date := $dates}}
+                    {{$date}}{{if ne (add $i 1) (len $dates)}}, {{end}}
+                    {{end}}
+                </li>
                 {{end}}
             </ul>
+
         </div>
     </div>
 </div>
