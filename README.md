@@ -43,7 +43,7 @@ To run the Groupie Tracker application, follow these steps:
       ```
       In the above example, the server starts, listening on port 9090
     
-    - Open the URL, broadcast by the server, in your browser and explore the artists’ information and event data.
+    - If the platform doesn't automatically open on your browser try doing it manually. Open the URL broadcast by the server, in your browser and explore the artists’ information and event data.
 
 ## Deployment
 
