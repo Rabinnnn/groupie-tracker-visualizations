@@ -8,11 +8,33 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
+	"runtime"
 	"path"
 	"path/filepath"
 )
 
 var port = flag.Int("P", 8080, "port to listen on")
+
+func openBrowser(url string){
+	var err error
+
+	switch runtime.GOOS{
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll, FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+
+	if err != nil{
+		log.Printf("Failed to open browser:%v",err)
+	}
+}
+
 
 func main() {
 	// parse the defined command-line flags
@@ -49,6 +71,10 @@ func main() {
 	)
 
 	servePort := fmt.Sprintf(":%d", *port)
-	fmt.Printf("Server running at http://localhost%s\n", servePort)
+	url := fmt.Sprintf("http://localhost%s\n", servePort)
+	
+	fmt.Printf("Server running at %s\n", url)
+
+	openBrowser(url)
 	log.Fatal(http.ListenAndServe(servePort, nil))
 }
