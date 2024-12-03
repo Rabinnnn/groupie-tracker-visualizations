@@ -9,20 +9,20 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"runtime"
 	"path"
 	"path/filepath"
+	"runtime"
 )
 
 var port = flag.Int("P", 8080, "port to listen on")
 
-//openBrowser function opens a URL in the default web browser based on the operating
-//system that the code is running on. It handles Linux, Windows,and macOS platforms.
-//It takes a single parameter which is a string representing the URL to open.
-func openBrowser(url string){
+// openBrowser function opens a URL in the default web browser based on the operating
+// system that the code is running on. It handles Linux, Windows,and macOS platforms.
+// It takes a single parameter which is a string representing the URL to open.
+func openBrowser(url string) {
 	var err error
 
-	switch runtime.GOOS{
+	switch runtime.GOOS {
 	case "linux":
 		err = exec.Command("xdg-open", url).Start()
 	case "windows":
@@ -33,11 +33,10 @@ func openBrowser(url string){
 		err = fmt.Errorf("unsupported platform")
 	}
 
-	if err != nil{
-		log.Printf("Failed to open browser:%v",err)
+	if err != nil {
+		log.Printf("Failed to open browser:%v", err)
 	}
 }
-
 
 func main() {
 	// parse the defined command-line flags
