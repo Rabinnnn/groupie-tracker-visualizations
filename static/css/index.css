@@ -47,7 +47,7 @@ html, body {
 
 .hero-text h1 {
     font-size: 5em;
-    line-height: 1em;
+    line-height: 1.2em;
     margin-bottom: 20px; 
 
     color: #fff; 
@@ -139,9 +139,9 @@ a {
     100% { background-position: 0% 70%; }
 }
 
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
     .hero-text h1 {
-        font-size: 3em; 
+        font-size: 2em; 
     }
     
     .discover-button {
@@ -152,6 +152,21 @@ a {
     .card {
         width: 250px; 
     }
+
+    /* Hero section */
+.hero-img {
+    position: relative;
+    height: 50vh;
+    width: 100%;
+    overflow: hidden;
+    background-image: url("/static/images/music.jpg");
+    background-position: contain;
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-shadow: 0 0 23px 0 rgba(90, 90, 90, 0.8);
+}
+
+
 }
 
 
