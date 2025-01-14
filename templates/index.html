@@ -16,9 +16,15 @@
         <button class="discover-button" onclick="scrollToCards()">
             
             <span><i class="fa-solid fa-arrow-down"></i></span>
-        </button>
-        
+        </button>        
     </div>
+    <div class="search-container">
+        <input type="search" name="query" class="search-input" id="search-input" placeholder="Search for artists..." value="">
+        <button type="submit" class="search-button" id="search-button">
+          <i class="fas fa-search"></i>
+        </button>
+        <ul id="suggestions" class="suggestions-list"></ul>
+      </div>
 </div>
 
 <div id="artistCards">
