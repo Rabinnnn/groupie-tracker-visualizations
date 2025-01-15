@@ -222,6 +222,7 @@ a {
   .suggestions-list li {
     padding: 10px 20px;
     cursor: pointer;
+    color: #F2F2F2;
     transition: background-color 0.3s ease;
   }
   
@@ -230,7 +231,7 @@ a {
   }
   
   #suggestions li.active {
-    background-color: rgba(255, 0, 0, 0.7);
+    background-color:rgb(113, 161, 161);
   }
   
   @media (max-width: 768px) {
