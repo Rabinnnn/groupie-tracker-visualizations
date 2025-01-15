@@ -1,13 +1,19 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"groupie-tracker/api"
 	"groupie-tracker/xerrors"
 	"log"
 	"net/http"
 	"path/filepath"
+	"strconv"
+	"strings"
+	"sync"
 	"text/template"
+	"time"
 )
 
 // DetailsHandler handles HTTP GET requests for artist details.
@@ -34,6 +40,7 @@ import (
 //   - 405 Method Not Allowed: Request method is not GET
 //   - 404 Not Found: Invalid or non-existent artist ID
 //   - 500 Internal Server Error: Server-side processing errors
+var ID string
 func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 	handlerTemplate := "detailsPage.html"
 	if r.Method != "GET" {
@@ -41,8 +48,9 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := r.URL.Query().Get("id")
-	data, err := api.GetAllDetails(id)
+	//id := r.URL.Query().Get("id")
+	ID = r.URL.Query().Get("id")
+	data, err := api.GetAllDetails(ID)
 	log.Printf("Found err: %v\n", err)
 	if errors.Is(err, xerrors.ErrNotFound) {
 		RenderErrorPage(w, "Not Found!", http.StatusNotFound)
@@ -74,4 +82,126 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error executing template: %v\n", err)
 		return
 	}
+}
+
+
+
+
+var (
+	artistCache        []api.Artist
+	locationCache      api.Location
+	dateCache          api.Date
+	relationCache      api.Relations
+	cacheTime          time.Time
+	cacheMutex         sync.RWMutex
+	isCacheInitialized bool
+)
+
+const cacheDuration = 10 * time.Minute
+
+func initCache() {
+	cacheMutex.Lock()
+	defer cacheMutex.Unlock()
+
+	if !isCacheInitialized {
+		updateCache()
+		isCacheInitialized = true
+	}
+}
+
+func updateCache() {
+	var wg sync.WaitGroup
+	wg.Add(4)
+
+	go func() {
+		defer wg.Done()
+		artists, err := api.GetArtists()
+		if err == nil {
+			artistCache = artists
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		locations, err := api.GetLocation(ID)
+		if err == nil {
+			locationCache = locations
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		dates, err := api.GetDates(ID)
+		if err == nil {
+			dateCache = dates
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		relations, err := api.GetRelations(ID)
+		if err == nil {
+			relationCache = relations
+		}
+	}()
+
+	wg.Wait()
+	cacheTime = time.Now()
+}
+
+func getCachedData() ([]api.Artist, api.Location, api.Date, api.Relations) {
+	cacheMutex.RLock()
+	defer cacheMutex.RUnlock()
+
+	if time.Since(cacheTime) > cacheDuration {
+		go updateCache()
+	}
+
+	return artistCache, locationCache, dateCache, relationCache
+}
+
+func SearchHandler(w http.ResponseWriter, r *http.Request) {
+	initCache()
+	query := r.URL.Query().Get("q")
+	if query == " " {
+		json.NewEncoder(w).Encode([]string{})
+		return
+	}
+	suggestions := []string{}
+	artists, _, _, _ := getCachedData()
+
+	for _, artist := range artists {
+		// Artist/band name
+		if strings.Contains(strings.ToLower(artist.Name), strings.ToLower(query)) {
+			suggestions = append(suggestions, fmt.Sprintf("%s - artist/band", artist.Name))
+		}
+
+		// Members
+		for _, member := range artist.Members {
+			if strings.Contains(strings.ToLower(member), strings.ToLower(query)) {
+				suggestions = append(suggestions, fmt.Sprintf("%s - member", member))
+			}
+		}
+
+		// First album date
+		if strings.Contains(strings.ToLower(artist.FirstAlbum), strings.ToLower(query)) {
+			suggestions = append(suggestions, fmt.Sprintf("%s - first album date", artist.FirstAlbum))
+		}
+
+		// Creation date
+		if strings.Contains(strconv.Itoa(artist.CreationDate), query) {
+			suggestions = append(suggestions, fmt.Sprintf("%d - creation date", artist.CreationDate))
+		}
+
+		// Locations
+		locations := strings.Split(artist.Locations, ", ")
+		for _, loc := range locations {
+			if strings.Contains(strings.ToLower(loc), strings.ToLower(query)) {
+				suggestions = append(suggestions, fmt.Sprintf("%s - location", loc))
+			}
+		}
+
+	}
+
+	json.NewEncoder(w).Encode(suggestions)
 }
