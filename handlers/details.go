@@ -49,9 +49,7 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//id := r.URL.Query().Get("id")
 	ID := r.URL.Query().Get("id")
-	fmt.Println(ID)
 	data, err := api.GetAllDetails(ID)
 	log.Printf("Found err: %v\n", err)
 	if errors.Is(err, xerrors.ErrNotFound) {
@@ -96,7 +94,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	suggestions := []string{}
-	artists, _, _, _ := getCachedData()
+	artists, locations, _, _ := getCachedData()
 
 	for _, artist := range artists {
 		// Artist/band name
@@ -121,14 +119,15 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			suggestions = append(suggestions, fmt.Sprintf("%d - creation date", artist.CreationDate))
 		}
 
-		// Locations
-		locations := strings.Split(artist.Locations, ", ")
-		for _, loc := range locations {
+	}
+
+	for _, location := range locations {
+		locSlice := strings.Split(location.Locations[0], " ")
+		for _, loc := range locSlice{
 			if strings.Contains(strings.ToLower(loc), strings.ToLower(query)) {
 				suggestions = append(suggestions, fmt.Sprintf("%s - location", loc))
 			}
 		}
-
 	}
 
 	json.NewEncoder(w).Encode(suggestions)
@@ -174,7 +173,7 @@ func updateCache() {
 	go func() {
 		defer wg.Done()
 		locations, err := api.GetAllLocations()
-		fmt.Println(locations)
+		//fmt.Println(locations)
 		if err == nil {
 			locationCache = locations
 		}
