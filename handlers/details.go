@@ -40,8 +40,9 @@ import (
 //   - 405 Method Not Allowed: Request method is not GET
 //   - 404 Not Found: Invalid or non-existent artist ID
 //   - 500 Internal Server Error: Server-side processing errors
-var ID string
+
 func DetailsHandler(w http.ResponseWriter, r *http.Request) {
+	
 	handlerTemplate := "detailsPage.html"
 	if r.Method != "GET" {
 		RenderErrorPage(w, "Method Not Allowed!", http.StatusMethodNotAllowed)
@@ -49,7 +50,8 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//id := r.URL.Query().Get("id")
-	ID = r.URL.Query().Get("id")
+	ID := r.URL.Query().Get("id")
+	fmt.Println(ID)
 	data, err := api.GetAllDetails(ID)
 	log.Printf("Found err: %v\n", err)
 	if errors.Is(err, xerrors.ErrNotFound) {
@@ -85,80 +87,6 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 
-
-
-var (
-	artistCache        []api.Artist
-	locationCache      api.Location
-	dateCache          api.Date
-	relationCache      api.Relations
-	cacheTime          time.Time
-	cacheMutex         sync.RWMutex
-	isCacheInitialized bool
-)
-
-const cacheDuration = 10 * time.Minute
-
-func initCache() {
-	cacheMutex.Lock()
-	defer cacheMutex.Unlock()
-
-	if !isCacheInitialized {
-		updateCache()
-		isCacheInitialized = true
-	}
-}
-
-func updateCache() {
-	var wg sync.WaitGroup
-	wg.Add(4)
-
-	go func() {
-		defer wg.Done()
-		artists, err := api.GetArtists()
-		if err == nil {
-			artistCache = artists
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-		locations, err := api.GetLocation(ID)
-		if err == nil {
-			locationCache = locations
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-		dates, err := api.GetDates(ID)
-		if err == nil {
-			dateCache = dates
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-		relations, err := api.GetRelations(ID)
-		if err == nil {
-			relationCache = relations
-		}
-	}()
-
-	wg.Wait()
-	cacheTime = time.Now()
-}
-
-func getCachedData() ([]api.Artist, api.Location, api.Date, api.Relations) {
-	cacheMutex.RLock()
-	defer cacheMutex.RUnlock()
-
-	if time.Since(cacheTime) > cacheDuration {
-		go updateCache()
-	}
-
-	return artistCache, locationCache, dateCache, relationCache
-}
 
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	initCache()
@@ -204,4 +132,81 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(suggestions)
+}
+
+
+
+
+var (
+	artistCache        []api.Artist
+	locationCache      []api.Location
+	dateCache          []api.Date
+	relationCache      []api.Relations
+	cacheTime          time.Time
+	cacheMutex         sync.RWMutex
+	isCacheInitialized bool
+)
+
+const cacheDuration = 10 * time.Minute
+
+func initCache() {
+	cacheMutex.Lock()
+	defer cacheMutex.Unlock()
+
+	if !isCacheInitialized {
+		updateCache()
+		isCacheInitialized = true
+	}
+}
+
+func updateCache() {
+
+	var wg sync.WaitGroup
+	wg.Add(4)
+
+	go func() {
+		defer wg.Done()
+		artists, err := api.GetArtists()
+		if err == nil {
+			artistCache = artists
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		locations, err := api.GetAllLocations()
+		fmt.Println(locations)
+		if err == nil {
+			locationCache = locations
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		dates, err := api.GetAllDates()
+		if err == nil {
+			dateCache = dates
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		relations, err := api.GetAllRelations()
+		if err == nil {
+			relationCache = relations
+		}
+	}()
+
+	wg.Wait()
+	cacheTime = time.Now()
+}
+
+func getCachedData() ([]api.Artist, []api.Location, []api.Date, []api.Relations) {
+	cacheMutex.RLock()
+	defer cacheMutex.RUnlock()
+
+	if time.Since(cacheTime) > cacheDuration {
+		go updateCache()
+	}
+
+	return artistCache, locationCache, dateCache, relationCache
 }

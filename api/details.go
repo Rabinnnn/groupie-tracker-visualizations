@@ -7,6 +7,7 @@ import (
 	"groupie-tracker/xerrors"
 	"net/http"
 	"sync"
+	"io"
 )
 
 // GetLocation retrieves location data for a specific artist from the groupietrackers API.
@@ -263,4 +264,82 @@ func GetAllDetails(id string) (AllDetails, error) {
 	}
 
 	return data, nil
+}
+
+
+
+
+var (
+	LocationsURL = "https://groupietrackers.herokuapp.com/api/locations"
+	DatesURL     = "https://groupietrackers.herokuapp.com/api/dates"
+	RelationURL  = "https://groupietrackers.herokuapp.com/api/relation"
+)
+
+// FetchData makes an HTTP GET request to the given URL and returns the response body
+func FetchData(url string) ([]byte, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch data: %v", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %v", err)
+	}
+
+	return body, nil
+}
+
+
+// GetLocations fetches the location data from the API and returns a slice of Location structs
+func GetAllLocations() ([]Location, error) {
+	body, err := FetchData(LocationsURL)
+	if err != nil {
+		return nil, err
+	}
+
+	var locations struct {
+		Index []Location `json:"index"`
+	}
+
+	if err := json.Unmarshal(body, &locations); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal locations: %v", err)
+	}
+	return locations.Index, nil
+}
+
+// GetDates fetches the date data from the API and returns a slice of Date structs
+func GetAllDates() ([]Date, error) {
+	body, err := FetchData(DatesURL)
+	if err != nil {
+		return nil, err
+	}
+
+	var dates struct {
+		Index []Date `json:"index"`
+	}
+
+	if err := json.Unmarshal(body, &dates); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal dates: %v", err)
+	}
+
+	return dates.Index, nil
+}
+
+// GetRelations fetches the relation data from the API and returns a slice of Relation structs
+func GetAllRelations() ([]Relations, error) {
+	body, err := FetchData(RelationURL)
+	if err != nil {
+		return nil, err
+	}
+
+	var relations struct {
+		Index []Relations `json:"index"`
+	}
+	if err := json.Unmarshal(body, &relations); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal relations: %v", err)
+	}
+
+	return relations.Index, nil
 }

@@ -29,6 +29,7 @@ import (
 //   - 404 Not Found: URL path is not "/"
 //   - 500 Internal Server Error: Server-side processing errors
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method != "GET" {
 		RenderErrorPage(w, "Method Not Allowed!", http.StatusMethodNotAllowed)
 		return
