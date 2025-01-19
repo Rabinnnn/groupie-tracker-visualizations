@@ -19,7 +19,7 @@
         </button>        
     </div>
     <div class="search-container">
-        <input type="search" name="query" class="search-input" id="search-input" placeholder="Search for artists..." value="">
+        <input type="search" name="query" class="search-input" id="search-input" placeholder="Search for artists..." value="{{.Query}}">
         <button type="submit" class="search-button" id="search-button">
           <i class="fas fa-search"></i>
         </button>
@@ -28,7 +28,7 @@
 </div>
 
 <div id="artistCards">
-    {{range .}}
+    {{range .Artists}}
     <a href="/details?id={{.ID}}">
         <div class="card">
             <div class="container">
