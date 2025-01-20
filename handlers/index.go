@@ -3,8 +3,12 @@ package handlers
 import (
 	//"bytes"
 	//"fmt"
+	//"fmt"
+	"fmt"
 	"groupie-tracker/api"
 	"html/template"
+
+	//"log"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -65,11 +69,24 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	// 	artists[i].Query = query
 	// }	
 
+	// for i := range artists {
+	// 	// Format the URL with the value of i
+	// 	url := fmt.Sprintf("https://groupietrackers.herokuapp.com/api/locations/%d", i+1)
+
+	// 	// Fetch artist locations using the formatted URL
+	// 	locations, err := api.GetLocation(url)
+	// 	if err == nil {
+	// 		artists[i].Locations = strings.Join(locations.Locations, ", ")
+	// 	} else {
+	// 		log.Printf("Error fetching location for artist %d: %v", artists[i].ID, err)
+	// 	}
+	// }
+
 	filteredArtists := filterArtists(artists, query)
-	//fmt.Printf("leng:%d",len(filteredArtists))
+	fmt.Printf("leng:%d\n", len(filteredArtists))
 	//fmt.Println(query)
 	if len(filteredArtists) == 0 && query != "" {
-		RenderErrorPage(w, "No Result Found for this search.", http.StatusNotFound)
+		RenderErrorPage(w, "No Result Found for this search", http.StatusNotFound)
 		return
 	}
 

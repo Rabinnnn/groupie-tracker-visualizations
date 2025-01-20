@@ -122,8 +122,8 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, location := range locations {
-		locSlice := strings.Split(location.Locations[0], " ")
-		for _, loc := range locSlice{
+		//locSlice := strings.Split(location.Locations, ", ")
+		for _, loc := range location.Locations{
 			if strings.Contains(strings.ToLower(loc), strings.ToLower(query)) {
 				suggestions = append(suggestions, fmt.Sprintf("%s - location", loc))
 			}
