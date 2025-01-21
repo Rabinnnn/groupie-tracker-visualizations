@@ -1,17 +1,10 @@
 package handlers
 
 import (
-	//"bytes"
-	//"fmt"
-	//"fmt"
-	//"fmt"
 	"encoding/json"
 	"fmt"
 	"groupie-tracker/api"
 	"html/template"
-	//"log"
-
-	//"log"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -57,21 +50,10 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//artists, err := api.GetArtists()
 	query := r.URL.Query().Get("query") // Get the query parameter
 
 	artists, locations, _, _ := getCachedData()
-
-	// if err != nil {
-	// 	RenderErrorPage(w, "Internal Server Error!", http.StatusInternalServerError)
-	// 	return
-	// }
-
-
-	// Update the Query field for each Artist
-	// for i := range artists {
-	// 	artists[i].Query = query
-	// }	
+	
 	for i := range artists {
 		// Ensure we don't exceed the length of the locations slice
 		if i < len(locations) {
@@ -86,30 +68,8 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	
-	//for i := range artists {
-	//	artists[i].Locations = locations
-		// Format the URL with the value of i
-		//url := fmt.Sprintf("https://groupietrackers.herokuapp.com/api/locations/%d", i+1)
 
-		// Fetch artist locations using the formatted URL
-		//locations, err := api.FetchArtistLocations(url)
-		//if err == nil {
-			//artists[i].Locations = strings.Join(locations, ", ")
-		//} else {
-		//	log.Printf("Error fetching location for artist %d: %v", artists[i].ID, err)
-		//}
-//	}
-	// for i := range artists{
-	// 	fmt.Println(artists[i].Locations)
-	// }
 	filteredArtists := filterArtists(artists, query)
-	//fmt.Println(filteredArtists)
-	//fmt.Printf("leng:%d\n", len(filteredArtists))
-	//fmt.Println(query)
-	// if len(filteredArtists) == 0 && query != "" {
-	// 	RenderErrorPage(w, "No Result Found for this search!", http.StatusNotFound)
-	// 	return
-	// }
 
 	data := TemplateData{
 		Artists:   filteredArtists,
@@ -124,8 +84,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = temp.Execute(w, data)
-	//var buf bytes.Buffer
-	//err = temp.Execute(&buf, data)
+
 	if err != nil {
 		RenderErrorPage(w, "Internal Server Error222", http.StatusInternalServerError)
 		return
