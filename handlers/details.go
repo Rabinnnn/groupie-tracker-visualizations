@@ -206,6 +206,6 @@ func getCachedData() ([]api.Artist, []api.Location, []api.Date, []api.Relations)
 	if time.Since(cacheTime) > cacheDuration {
 		go updateCache()
 	}
-
+	
 	return artistCache, locationCache, dateCache, relationCache
 }

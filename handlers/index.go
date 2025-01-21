@@ -4,9 +4,11 @@ import (
 	//"bytes"
 	//"fmt"
 	//"fmt"
+	//"fmt"
 	"fmt"
 	"groupie-tracker/api"
 	"html/template"
+	"log"
 
 	//"log"
 	"net/http"
@@ -69,26 +71,29 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	// 	artists[i].Query = query
 	// }	
 
-	// for i := range artists {
-	// 	// Format the URL with the value of i
-	// 	url := fmt.Sprintf("https://groupietrackers.herokuapp.com/api/locations/%d", i+1)
+	for i := range artists {
+		// Format the URL with the value of i
+		url := fmt.Sprintf("https://groupietrackers.herokuapp.com/api/locations/%d", i+1)
 
-	// 	// Fetch artist locations using the formatted URL
-	// 	locations, err := api.GetLocation(url)
-	// 	if err == nil {
-	// 		artists[i].Locations = strings.Join(locations.Locations, ", ")
-	// 	} else {
-	// 		log.Printf("Error fetching location for artist %d: %v", artists[i].ID, err)
-	// 	}
-	// }
-
-	filteredArtists := filterArtists(artists, query)
-	fmt.Printf("leng:%d\n", len(filteredArtists))
-	//fmt.Println(query)
-	if len(filteredArtists) == 0 && query != "" {
-		RenderErrorPage(w, "No Result Found for this search", http.StatusNotFound)
-		return
+		// Fetch artist locations using the formatted URL
+		locations, err := api.FetchArtistLocations(url)
+		if err == nil {
+			artists[i].Locations = strings.Join(locations, ", ")
+		} else {
+			log.Printf("Error fetching location for artist %d: %v", artists[i].ID, err)
+		}
 	}
+	// for i := range artists{
+	// 	fmt.Println(artists[i].Locations)
+	// }
+	filteredArtists := filterArtists(artists, query)
+	//fmt.Println(filteredArtists)
+	//fmt.Printf("leng:%d\n", len(filteredArtists))
+	//fmt.Println(query)
+	// if len(filteredArtists) == 0 && query != "" {
+	// 	RenderErrorPage(w, "No Result Found for this search!", http.StatusNotFound)
+	// 	return
+	// }
 
 	data := TemplateData{
 		Artists:   filteredArtists,
