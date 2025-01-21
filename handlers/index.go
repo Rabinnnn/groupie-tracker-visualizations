@@ -5,10 +5,11 @@ import (
 	//"fmt"
 	//"fmt"
 	//"fmt"
+	"encoding/json"
 	"fmt"
 	"groupie-tracker/api"
 	"html/template"
-	"log"
+	//"log"
 
 	//"log"
 	"net/http"
@@ -59,7 +60,8 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	//artists, err := api.GetArtists()
 	query := r.URL.Query().Get("query") // Get the query parameter
 
-	artists, _, _, _ := getCachedData()
+	artists, locations, _, _ := getCachedData()
+
 	// if err != nil {
 	// 	RenderErrorPage(w, "Internal Server Error!", http.StatusInternalServerError)
 	// 	return
@@ -70,19 +72,33 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	// for i := range artists {
 	// 	artists[i].Query = query
 	// }	
-
 	for i := range artists {
-		// Format the URL with the value of i
-		url := fmt.Sprintf("https://groupietrackers.herokuapp.com/api/locations/%d", i+1)
-
-		// Fetch artist locations using the formatted URL
-		locations, err := api.FetchArtistLocations(url)
-		if err == nil {
-			artists[i].Locations = strings.Join(locations, ", ")
-		} else {
-			log.Printf("Error fetching location for artist %d: %v", artists[i].ID, err)
+		// Ensure we don't exceed the length of the locations slice
+		if i < len(locations) {
+			// Convert locations[i].Locations (a []string) into a JSON string
+			locationData, err := json.Marshal(locations[i].Locations)
+			if err != nil {
+				fmt.Printf("Error marshalling locations for artist %d: %v\n", artists[i].ID, err)
+				continue
+			}
+			// Assign the serialized JSON string to the Locations field of the artist
+			artists[i].Locations = string(locationData)
 		}
 	}
+	
+	//for i := range artists {
+	//	artists[i].Locations = locations
+		// Format the URL with the value of i
+		//url := fmt.Sprintf("https://groupietrackers.herokuapp.com/api/locations/%d", i+1)
+
+		// Fetch artist locations using the formatted URL
+		//locations, err := api.FetchArtistLocations(url)
+		//if err == nil {
+			//artists[i].Locations = strings.Join(locations, ", ")
+		//} else {
+		//	log.Printf("Error fetching location for artist %d: %v", artists[i].ID, err)
+		//}
+//	}
 	// for i := range artists{
 	// 	fmt.Println(artists[i].Locations)
 	// }
