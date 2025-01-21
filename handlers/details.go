@@ -122,7 +122,6 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, location := range locations {
-		//locSlice := strings.Split(location.Locations, ", ")
 		for _, loc := range location.Locations{
 			if strings.Contains(strings.ToLower(loc), strings.ToLower(query)) {
 				suggestions = append(suggestions, fmt.Sprintf("%s - location", loc))
@@ -173,7 +172,6 @@ func updateCache() {
 	go func() {
 		defer wg.Done()
 		locations, err := api.GetAllLocations()
-		//fmt.Println(locations)
 		if err == nil {
 			locationCache = locations
 		}

@@ -343,18 +343,3 @@ func GetAllRelations() ([]Relations, error) {
 
 	return relations.Index, nil
 }
-
-// Fetch artist locations from the provided URL
-func FetchArtistLocations(locationsURL string) ([]string, error) {
-	body, err := FetchData(locationsURL)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch location data: %v", err)
-	}
-
-	var locationData Location
-	if err := json.Unmarshal(body, &locationData); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal location data: %v", err)
-	}
-
-	return locationData.Locations, nil
-}
