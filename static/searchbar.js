@@ -26,12 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
   
     // Filter suggestions based on input
     function filterSuggestions(query) {
-      query = query.toLowerCase();
-      return cachedSuggestions.filter(suggestion => 
-        suggestion.toLowerCase().includes(query)
-      );
+      query = query.toLowerCase(); // Ensure case-insensitivity
+      return cachedSuggestions.filter(suggestion => {
+        const [firstPart] = suggestion.split(" - "); // Split suggestion at the hyphen
+        return firstPart.toLowerCase().includes(query); // Match query only with the first part
+      });
     }
-  
+
     // Display suggestions
     function displaySuggestions(suggestions) {
       suggestionsList.innerHTML = "";
