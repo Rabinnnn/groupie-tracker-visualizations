@@ -11,6 +11,12 @@ import (
 	"strings"
 )
 
+type TemplateData struct {
+	Artists   []api.Artist
+	Query     string
+	NoResults bool
+}
+
 // IndexHandler handles HTTP GET requests for the main index page.
 //
 // It serves as the main entry point of the application, displaying a list of all artists.
@@ -32,14 +38,8 @@ import (
 //   - 405 Method Not Allowed: Request method is not GET
 //   - 404 Not Found: URL path is not "/"
 //   - 500 Internal Server Error: Server-side processing errors
-
-type TemplateData struct {
-	Artists   []api.Artist
-	Query     string
-	NoResults bool
-}
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	initCache()
+	updateCache()
 	if r.Method != "GET" {
 		RenderErrorPage(w, "Method Not Allowed!", http.StatusMethodNotAllowed)
 		return
@@ -51,9 +51,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := r.URL.Query().Get("query") // Get the query parameter
-
 	artists, locations, _, _ := getCachedData()
-	
 	for i := range artists {
 		// Ensure we don't exceed the length of the locations slice
 		if i < len(locations) {
@@ -67,7 +65,6 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 			artists[i].Locations = string(locationData)
 		}
 	}
-	
 
 	filteredArtists := filterArtists(artists, query)
 
@@ -79,18 +76,17 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	temp, err := template.ParseFiles(filepath.Join(templatesDir, "index.html"))
 	if err != nil {
-		RenderErrorPage(w, "Internal Server Error333", http.StatusInternalServerError)
+		RenderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	err = temp.Execute(w, data)
 
 	if err != nil {
-		RenderErrorPage(w, "Internal Server Error222", http.StatusInternalServerError)
+		RenderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 }
-
 
 // filterArtists filters the list of artists based on the search query
 func filterArtists(artists []api.Artist, query string) []api.Artist {

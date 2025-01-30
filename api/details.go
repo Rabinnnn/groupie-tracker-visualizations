@@ -5,14 +5,20 @@ import (
 	"fmt"
 	"groupie-tracker/fileio"
 	"groupie-tracker/xerrors"
+	"io"
 	"net/http"
 	"sync"
-	"io"
 )
 
-// GetLocation retrieves location data for a specific artist from the groupietrackers API.
+var (
+	LocationsURL = "https://groupietrackers.herokuapp.com/api/locations"
+	DatesURL     = "https://groupietrackers.herokuapp.com/api/dates"
+	RelationURL  = "https://groupietrackers.herokuapp.com/api/relation"
+)
+
+// GetLocation retrieves location data for a specific artist from the groupie trackers API.
 //
-// The function makes an HTTP GET request to the locations endpoint of the groupietrackers API
+// The function makes an HTTP GET request to the locations endpoint of the groupie trackers API
 // using the provided artist ID. It then decodes the JSON response into a Location struct.
 //
 // Parameters:
@@ -52,9 +58,9 @@ func GetLocation(id string) (Location, error) {
 	return data, nil
 }
 
-// GetDates retrieves concert dates data for a specific artist from the groupietrackers API.
+// GetDates retrieves concert dates data for a specific artist from the groupie trackers API.
 //
-// The function makes an HTTP GET request to the dates endpoint of the groupietrackers API
+// The function makes an HTTP GET request to the dates endpoint of the groupie trackers API
 // using the provided artist ID. It then decodes the JSON response into a Date struct.
 //
 // Parameters:
@@ -95,9 +101,9 @@ func GetDates(id string) (Date, error) {
 }
 
 // GetRelations retrieves the relationship data between concert dates and locations
-// for a specific artist from the groupietrackers API.
+// for a specific artist from the groupie-trackers API.
 //
-// The function makes an HTTP GET request to the relation endpoint of the groupietrackers API
+// The function makes an HTTP GET request to the relation endpoint of the groupie-trackers API
 // using the provided artist ID. It then decodes the JSON response into a Relations struct,
 // which contains a map of dates to their corresponding locations.
 //
@@ -138,9 +144,9 @@ func GetRelations(id string) (Relations, error) {
 	return data, nil
 }
 
-// GetDetails retrieves detailed information about a specific artist from the groupietrackers API.
+// GetDetails retrieves detailed information about a specific artist from the groupie-trackers API.
 //
-// The function makes an HTTP GET request to the artists endpoint of the groupietrackers API
+// The function makes an HTTP GET request to the artists endpoint of the groupie-trackers API
 // using the provided artist ID. It then decodes the JSON response into a Details struct containing
 // basic information about the artist such as name, image, members, creation date, and first album.
 //
@@ -184,7 +190,7 @@ func GetDetails(id string) (Details, error) {
 }
 
 // GetAllDetails retrieves comprehensive information about a specific artist by aggregating
-// data from multiple endpoints of the groupietrackers API.
+// data from multiple endpoints of the groupie trackers API.
 //
 // The function makes multiple API calls to collect:
 // - Basic artist details (name, image, members, etc.)
@@ -266,22 +272,13 @@ func GetAllDetails(id string) (AllDetails, error) {
 	return data, nil
 }
 
-
-
-
-var (
-	LocationsURL = "https://groupietrackers.herokuapp.com/api/locations"
-	DatesURL     = "https://groupietrackers.herokuapp.com/api/dates"
-	RelationURL  = "https://groupietrackers.herokuapp.com/api/relation"
-)
-
 // FetchData makes an HTTP GET request to the given URL and returns the response body
 func FetchData(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch data: %v", err)
 	}
-	defer resp.Body.Close()
+	defer fileio.Close(resp.Body)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -291,8 +288,7 @@ func FetchData(url string) ([]byte, error) {
 	return body, nil
 }
 
-
-// GetLocations fetches the location data from the API and returns a slice of Location structs
+// GetAllLocations fetches all location data from the API and returns a slice of Location structs
 func GetAllLocations() ([]Location, error) {
 	body, err := FetchData(LocationsURL)
 	if err != nil {
@@ -309,7 +305,7 @@ func GetAllLocations() ([]Location, error) {
 	return locations.Index, nil
 }
 
-// GetDates fetches the date data from the API and returns a slice of Date structs
+// GetAllDates fetches the date data from the API and returns a slice of Date structs
 func GetAllDates() ([]Date, error) {
 	body, err := FetchData(DatesURL)
 	if err != nil {
@@ -327,7 +323,7 @@ func GetAllDates() ([]Date, error) {
 	return dates.Index, nil
 }
 
-// GetRelations fetches the relation data from the API and returns a slice of Relation structs
+// GetAllRelations fetches the relation data from the API and returns a slice of Relations structs
 func GetAllRelations() ([]Relations, error) {
 	body, err := FetchData(RelationURL)
 	if err != nil {
