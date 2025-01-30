@@ -1,52 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Artist Cards</title>
-<link rel="stylesheet" type="text/css" href="/static/css/index.css">
-<link rel="stylesheet" type="text/css"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Artist Cards</title>
+    <link href="/static/css/index.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"
+          type="text/css">
+    <style>
+        .gif-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 5em;
+        }
+    </style>
 </head>
 <body>
-    
-<div id="hero" class="hero-img">
+
+<div class="hero-img" id="hero">
     <div class="hero-text">
         <h1>GROUPIE TRACKER</h1>
         <button class="discover-button" onclick="scrollToCards()">
-            
+
             <span><i class="fa-solid fa-arrow-down"></i></span>
-        </button>        
+        </button>
     </div>
     <div class="search-container">
-        <input type="search" name="query" class="search-input" id="search-input" placeholder="Search for artists..." value="{{.Query}}">
-        <button type="submit" class="search-button" id="search-button">
-          <i class="fas fa-search"></i>
+        <input class="search-input" id="search-input" name="query" placeholder="Search for artists..." type="search"
+               value="{{.Query}}">
+        <button class="search-button" id="search-button" type="submit">
+            <i class="fas fa-search"></i>
         </button>
-        <ul id="suggestions" class="suggestions-list"></ul>
-      </div>
+        <ul class="suggestions-list" id="suggestions"></ul>
+    </div>
 </div>
 
 <div id="artistCards">
+    <!-- Check if there is at least one artist for display -->
+    {{if .Artists}}
     {{range .Artists}}
     <a href="/details?id={{.ID}}">
         <div class="card">
             <div class="container">
                 <h4>{{.Name}}</h4>
-                <img src="{{.Image}}" alt="{{.Name}}" style="width:100%" loading="lazy">
+                <img alt="{{.Name}}" loading="lazy" src="{{.Image}}" style="width:100%">
             </div>
         </div>
     </a>
+    {{end}}
+
+    <!-- There is not a single artist for display -->
+    {{else}}
+    <div class="gif-container">
+        <div>
+            <img alt="No search results" src="/static/gifs/no-search-results.gif"/>
+            <h5 style="text-align: center">No Artist</h5>
+        </div>
+    </div>
     {{end}}
 </div>
 
 <script>
     function scrollToCards() {
         const cardsSection = document.getElementById('artistCards');
-        cardsSection.scrollIntoView({ behavior: 'smooth' });
+        cardsSection.scrollIntoView({behavior: 'smooth'});
     }
 </script>
-<script src="/js/searchbar.js"></script>
+<script src="/static/js/searchbar.js"></script>
 
 </body>
 </html>
