@@ -15,6 +15,17 @@
             width: 100%;
             margin-top: 5em;
         }
+        .filter-container {
+            margin: 20px 0;
+            display: none; /* Initially hidden */
+        }
+        .filter-container input {
+            margin-right: 10px;
+        }
+        #filter-button {
+            display: block;
+            margin: 20px auto; /* Center the button */
+        }
     </style>
 </head>
 <body>
@@ -23,7 +34,6 @@
     <div class="hero-text">
         <h1>GROUPIE TRACKER</h1>
         <button class="discover-button" onclick="scrollToCards()">
-
             <span><i class="fa-solid fa-arrow-down"></i></span>
         </button>
     </div>
@@ -37,8 +47,29 @@
     </div>
 </div>
 
+<button id="filter-button" onclick="toggleFilters()">Filter</button>
+<div class="filter-container" id="filter-container">
+    <h3>Filters</h3>
+    <label for="creation-date">Creation Date:</label>
+    <input type="range" id="creation-date" min="1900" max="2023" value="2023" oninput="updateValue('creation-date', 'creation-value')">
+    <span id="creation-value">2023</span>
+    
+    <label for="first-album-date">First Album Date:</label>
+    <input type="range" id="first-album-date" min="1900" max="2023" value="2023" oninput="updateValue('first-album-date', 'first-album-value')">
+    <span id="first-album-value">2023</span>
+    
+    <h4>Number of Members:</h4>
+    <label><input type="radio" name="members" value="1"> 1 Member</label>
+    <label><input type="radio" name="members" value="2"> 2 Members</label>
+    <label><input type="radio" name="members" value="3"> 3 Members</label>
+    
+    <h4>Locations of Concerts:</h4>
+    <label><input type="checkbox" value="USA"> USA</label>
+    <label><input type="checkbox" value="UK"> UK</label>
+    <label><input type="checkbox" value="Canada"> Canada</label>
+</div>
+
 <div id="artistCards">
-    <!-- Check if there is at least one artist for display -->
     {{if .Artists}}
     {{range .Artists}}
     <a href="/details?id={{.ID}}">
@@ -50,8 +81,6 @@
         </div>
     </a>
     {{end}}
-
-    <!-- There is not a single artist for display -->
     {{else}}
     <div class="gif-container">
         <div>
@@ -67,6 +96,19 @@
         const cardsSection = document.getElementById('artistCards');
         cardsSection.scrollIntoView({behavior: 'smooth'});
     }
+
+    function toggleFilters() {
+        const filterContainer = document.getElementById('filter-container');
+        filterContainer.style.display = filterContainer.style.display === 'none' || filterContainer.style.display === '' ? 'block' : 'none';
+    }
+
+    function updateValue(sliderId, valueId) {
+        const slider = document.getElementById(sliderId);
+        const valueDisplay = document.getElementById(valueId);
+        valueDisplay.textContent = slider.value;
+    }
+
+    // Filtering logic will be added here
 </script>
 <script src="/static/js/searchbar.js"></script>
 
