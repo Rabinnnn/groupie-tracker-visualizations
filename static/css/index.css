@@ -249,3 +249,78 @@ a {
     }
   }
   
+
+  .gif-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 5em;
+}
+
+/*FILTERS*/
+.filter-container {
+    margin: 20px auto; /* Center the filter container */
+    display: none; /* Initially hidden */
+    width: 80%; /* Adjust width as needed */
+    text-align: center; /* Center text inside */
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px; /* Inner padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.3s ease;
+    background-color: #ffffff; /* Background color */
+}
+
+.filter-container:hover {
+    background-color: #F2F2F2; 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05); 
+}
+.filter-container input {
+    margin-right: 10px;
+}
+#filter-button {
+    display: block;
+    margin: 20px auto; /* Center the button */
+    background: linear-gradient(
+    to right, #5f9ef8, #8972e4, #f3659d);
+    color: #fff; 
+    border: none;
+    padding: 10px 20px; 
+    font-size: 1.0em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    border-radius: 5px;
+    margin-top: 100px; 
+    z-index: 1; 
+}
+
+#filter-button:hover {
+    background: linear-gradient(to right, #4c75af, #6f63a0, #9c4668);
+}
+
+  /* Custom styles for range inputs */
+  input[type="range"] {
+    -webkit-appearance: none; /* Override default styling */
+    width: 15%; /* Full width */
+    height: 8px; /* Height of the track */
+    background: #ddd; /* Track color */
+    border-radius: 5px; /* Rounded corners */
+    outline: none; /* Remove outline */
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default styling */
+    appearance: none; /* Override default styling */
+    width: 20px; /* Width of the thumb */
+    height: 20px; /* Height of the thumb */
+    border-radius: 50%; /* Circular thumb */
+    background: #4CAF50; /* Thumb color */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+input[type="range"]::-moz-range-thumb {
+    width: 20px; /* Width of the thumb */
+    height: 20px; /* Height of the thumb */
+    border-radius: 50%; /* Circular thumb */
+    background: #4CAF50; /* Thumb color */
+    cursor: pointer; /* Pointer cursor on hover */
+}

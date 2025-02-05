@@ -7,26 +7,7 @@
     <link href="/static/css/index.css" rel="stylesheet" type="text/css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"
           type="text/css">
-    <style>
-        .gif-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            margin-top: 5em;
-        }
-        .filter-container {
-            margin: 20px 0;
-            display: none; /* Initially hidden */
-        }
-        .filter-container input {
-            margin-right: 10px;
-        }
-        #filter-button {
-            display: block;
-            margin: 20px auto; /* Center the button */
-        }
-    </style>
+
 </head>
 <body>
 
@@ -47,14 +28,14 @@
     </div>
 </div>
 
-<button id="filter-button" onclick="toggleFilters()">Filter</button>
+<button id="filter-button" onclick="toggleFilters()">Click here to filter</button>
 <div class="filter-container" id="filter-container">
     <h3>Filters</h3>
     <label for="creation-date">Creation Date:</label>
     <input type="range" id="creation-date" min="1900" max="2023" value="2023" oninput="updateValue('creation-date', 'creation-value')">
     <span id="creation-value">2023</span>
     
-    <label for="first-album-date">First Album Date:</label>
+    <label for="first-album-date" style="padding-left: 15px;">First Album Date:</label>
     <input type="range" id="first-album-date" min="1900" max="2023" value="2023" oninput="updateValue('first-album-date', 'first-album-value')">
     <span id="first-album-value">2023</span>
     
