@@ -1,6 +1,6 @@
-html, body {
-    height: 100%;
-    width: 100%;
+/* Add your custom styles here */
+
+.slider-container {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
@@ -339,4 +339,29 @@ input[type="range"]::-moz-range-thumb {
   .search-location:focus {
     outline: none;
     box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    background-color: #ffffff;
   }
+
+  
+
+
+#creation-date-slider{
+    -webkit-appearance: none; /* Override default styling */
+    width: 50%; /* Full width */
+    height: 15px; /* Height of the track */
+    background: #ddd; /* Track color */
+    border-radius: 5px; /* Rounded corners */
+    outline: none; /* Remove outline */
+    display: flex;
+    margin: 0 auto;
+}
+
+#first-album-date-slider{
+    -webkit-appearance: none; /* Override default styling */
+    width: 50%; /* Full width */
+    height: 15px; /* Height of the track */
+    background: #ddd; /* Track color */
+    border-radius: 5px; /* Rounded corners */
+    outline: none; /* Remove outline */
+    margin: 0 auto;
+}

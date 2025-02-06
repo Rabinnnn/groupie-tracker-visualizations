@@ -5,9 +5,8 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Artist Cards</title>
     <link href="/static/css/index.css" rel="stylesheet" type="text/css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"
-          type="text/css">
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css" rel="stylesheet" />
 </head>
 <body>
 
@@ -19,8 +18,7 @@
         </button>
     </div>
     <div class="search-container">
-        <input class="search-input" id="search-input" name="query" placeholder="Search for artists..." type="search"
-               value="{{.Query}}">
+        <input class="search-input" id="search-input" name="query" placeholder="Search for artists..." type="search" value="{{.Query}}">
         <button class="search-button" id="search-button" type="submit">
             <i class="fas fa-search"></i>
         </button>
@@ -32,12 +30,12 @@
 <div class="filter-container" id="filter-container">
     <h3>Filters</h3>
     <label for="creation-date">Creation Date:</label>
-    <input type="range" id="creation-date" min="1900" max="2023" value="2023" oninput="updateValue('creation-date', 'creation-value')">
-    <span id="creation-value">2023</span>
-    
-    <label for="first-album-date" style="padding-left: 15px;">First Album Date:</label>
-    <input type="range" id="first-album-date" min="1900" max="2023" value="2023" oninput="updateValue('first-album-date', 'first-album-value')">
-    <span id="first-album-value">2023</span>
+    <div id="creation-date-slider"></div>
+    <span id="creation-value-start">1900</span> - <span id="creation-value-end">2023</span>
+</br></br>
+    <label for="first-album-date">First Album Date:</label>
+    <div id="first-album-date-slider"></div>
+    <span id="first-album-value-start">1900</span> - <span id="first-album-value-end">2023</span>
     
     <h4>Number of Members:</h4>
     <label><input type="checkbox" name="members" value="1">1 </label>
@@ -49,11 +47,8 @@
     <label style="padding-left: 10px;"><input type="checkbox" name="members" value="7">7 </label>
     <label style="padding-left: 10px;"><input type="checkbox" name="members" value="8">8 </label>
 
-
-    
     <h4>Locations of Concerts:</h4>
-    <input class="search-location" id="search-location" name="query" placeholder="Enter location..." type="search"
-               value="">
+    <input class="search-location" id="search-location" name="query" placeholder="Enter location..." type="search" value="">
 </div>
 
 <div id="artistCards">
@@ -78,6 +73,7 @@
     {{end}}
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
 <script>
     function scrollToCards() {
         const cardsSection = document.getElementById('artistCards');
@@ -94,6 +90,36 @@
         const valueDisplay = document.getElementById(valueId);
         valueDisplay.textContent = slider.value;
     }
+
+    // Initialize the noUiSlider for creation date
+    var creationDateSlider = document.getElementById('creation-date-slider');
+    noUiSlider.create(creationDateSlider, {
+        start: [1900, 2023],
+        connect: true,
+        range: {
+            'min': 1900,
+            'max': 2023
+        }
+    });
+    creationDateSlider.noUiSlider.on('update', function(values, handle) {
+        document.getElementById('creation-value-start').textContent = Math.round(values[0]);
+        document.getElementById('creation-value-end').textContent = Math.round(values[1]);
+    });
+
+    // Initialize the noUiSlider for first album date
+    var firstAlbumDateSlider = document.getElementById('first-album-date-slider');
+    noUiSlider.create(firstAlbumDateSlider, {
+        start: [1900, 2023],
+        connect: true,
+        range: {
+            'min': 1900,
+            'max': 2023
+        }
+    });
+    firstAlbumDateSlider.noUiSlider.on('update', function(values, handle) {
+        document.getElementById('first-album-value-start').textContent = Math.round(values[0]);
+        document.getElementById('first-album-value-end').textContent = Math.round(values[1]);
+    });
 
     // Filtering logic will be added here
 </script>
