@@ -12,10 +12,11 @@ import (
 )
 
 var (
-	artistCache   []api.Artist
-	locationCache []api.Location
-	dateCache     []api.Date
-	relationCache []api.Relations
+	artistCache      []api.Artist
+	locationCache    []api.Location
+	locationMapCache map[int][]string
+	dateCache        []api.Date
+	relationCache    []api.Relations
 	// cacheTime keeps track of when last the offline cache was updated with online content
 	cacheTime          time.Time
 	cacheMutex         sync.RWMutex
@@ -221,5 +222,11 @@ func updateCache() {
 	if errCount.Load() == 0 {
 		cacheTime = time.Now()
 		isCacheInitialized = true
+
+		// map the locations so that the keys are the id's of the artists
+		locationMapCache = make(map[int][]string)
+		for _, loc := range locationCache {
+			locationMapCache[loc.Id] = loc.Locations
+		}
 	}
 }
