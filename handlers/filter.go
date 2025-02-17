@@ -74,6 +74,7 @@ type FilterAPIRequestData struct {
 	FirstAlbumDateFilterQuery      `json:"first_album_date"`
 	LocationsOfConcertsFilterQuery `json:"locations_of_concerts"`
 	NumberOfMembersFilterQuery     `json:"number_of_members"`
+	Combinator                     string `json:"combinator"`
 }
 
 type FilterAPIResponseData struct {
@@ -98,13 +99,22 @@ func FilterAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Print the received data (for demonstration)
+	// Print the received data
 	fmt.Printf("Received data: %#v\n", requestData)
 
-	// Create a response
-	responseData := FilterAPIResponseData{
-		Status:  200,
-		Artists: nil,
+	filteredArtistsIds := make(map[int]bool)
+	filteredArtists := make([]api.Artist, 0)
+
+	// add the given artists to the list of filtered artists if they haven't been included yet
+	addArtists := func(artists []api.Artist) {
+		for _, artist := range artists {
+			// add this artist if it's ID doesn't yet exist
+			_, ok := filteredArtistsIds[artist.ID]
+			if !ok {
+				filteredArtistsIds[artist.ID] = true
+				filteredArtists = append(filteredArtists, artist)
+			}
+		}
 	}
 
 	// Filter by creation date
@@ -114,7 +124,7 @@ func FilterAPI(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid JSON for creation_date query", http.StatusBadRequest)
 			return
 		}
-		responseData.Artists = append(responseData.Artists, matchedArtists...)
+		addArtists(matchedArtists)
 	}
 
 	// Filter by first album date
@@ -124,7 +134,7 @@ func FilterAPI(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid JSON for first_album_date query: "+err.Error(), http.StatusBadRequest)
 			return
 		}
-		responseData.Artists = append(responseData.Artists, matchedArtists...)
+		addArtists(matchedArtists)
 	}
 
 	// Filter by number_of_members
@@ -134,13 +144,19 @@ func FilterAPI(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid JSON for number_of_members query", http.StatusBadRequest)
 			return
 		}
-		responseData.Artists = append(responseData.Artists, matchedArtists...)
+		addArtists(matchedArtists)
 	}
 
 	// Filter by locations_of_concerts
 	{
 		matchedArtists := filterByLocationsOfConcerts(requestData.LocationsOfConcertsFilterQuery)
-		responseData.Artists = append(responseData.Artists, matchedArtists...)
+		addArtists(matchedArtists)
+	}
+
+	// Create a response
+	responseData := FilterAPIResponseData{
+		Status:  200,
+		Artists: filteredArtists,
 	}
 
 	// Encode the response data as JSON and send it
