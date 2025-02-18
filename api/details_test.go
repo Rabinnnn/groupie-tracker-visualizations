@@ -643,6 +643,7 @@ func TestGetAllDetails(t *testing.T) {
 				},
 			},
 			mockLocation: Location{
+				Id: 12,
 				Locations: []string{
 					"abu_dhabi-united_arab_emirates",
 					"new_york-usa",
