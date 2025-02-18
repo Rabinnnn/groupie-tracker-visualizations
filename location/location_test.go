@@ -48,3 +48,96 @@ func TestParse(t *testing.T) {
 		)
 	}
 }
+
+func TestContains(t *testing.T) {
+	type args struct {
+		a location
+		b location
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "Exact Match",
+			args: args{
+				a: "Texas, USA",
+				b: "Texas, USA",
+			},
+			want: true,
+		},
+
+		{
+			name: "State Match",
+			args: args{
+				a: "Texas",
+				b: "Texas, USA",
+			},
+			want: true,
+		},
+
+		{
+			name: "Country Match",
+			args: args{
+				a: "USA",
+				b: "Texas, USA",
+			},
+			want: true,
+		},
+
+		{
+			name: "Fuzzy Country Match",
+			args: args{
+				a: "Washington, USA",
+				b: "Texas, USA",
+			},
+			want: true,
+		},
+
+		{
+			name: "Fuzzy Country Match",
+			args: args{
+				a: "Seattle, Washington, USA ",
+				b: "Washington, USA ",
+			},
+			want: true,
+		},
+
+		{
+			name: "Fuzzy Country Match",
+			args: args{
+				a: "Seattle, Washington, USA ",
+				b: "Washington$USA ",
+			},
+			want: true,
+		},
+
+		{
+			name: "Fuzzy Country Match",
+			args: args{
+				a: "Seattle, Washington, USA ",
+				b: "Washington.USA ",
+			},
+			want: true,
+		},
+
+		{
+			name: "No match",
+			args: args{
+				a: "Seattle, Washington, USA",
+				b: "Hongkong, CN ",
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(
+			tt.name, func(t *testing.T) {
+				if got := Contains(tt.args.a, tt.args.b); got != tt.want {
+					t.Errorf("Contains() = %v, want %v", got, tt.want)
+				}
+			},
+		)
+	}
+}

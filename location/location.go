@@ -28,24 +28,32 @@ func Parse(s string) (city, country string) {
 	return
 }
 
+// Contains checks if a given location is contained in the other location.
+// For example Seattle, Washington, USA is part of Washington, USA
 func Contains(a, b location) bool {
-	re := regexp.MustCompile(`(\s|-|_|,|;|:|.)+`)
-	locationsInB := re.Split(b, -1)
+	re := regexp.MustCompile(`[^a-zA-Z0-9]+`)
+	locationsInA := removeBlank(re.Split(a, -1))
+	locationsInB := removeBlank(re.Split(b, -1))
 
-	for _, locInB := range locationsInB {
-		var larger, smaller location
-		if len(a) > len(locInB) {
-			larger = a
-			smaller = locInB
-		} else {
-			larger = locInB
-			smaller = a
-		}
-
-		if smaller != "" && (strings.Contains(strings.ToLower(larger), strings.ToLower(smaller))) {
-			return true
+	for _, locA := range locationsInA {
+		for _, locB := range locationsInB {
+			locA = strings.ToLower(locA)
+			locB = strings.ToLower(locB)
+			if strings.Contains(locA, locB) || strings.Contains(locB, locA) {
+				return true
+			}
 		}
 	}
 
 	return false
+}
+
+func removeBlank(a []string) []string {
+	for i, b := range a {
+		if strings.TrimSpace(b) == "" {
+			a = append(a[:i], a[i+1:]...)
+		}
+	}
+
+	return a
 }
