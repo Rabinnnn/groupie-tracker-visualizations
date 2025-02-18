@@ -2,6 +2,7 @@ package location
 
 import (
 	"regexp"
+	"slices"
 	"strings"
 )
 
@@ -35,15 +36,37 @@ func Contains(a, b location) bool {
 	locationsInA := removeBlank(re.Split(a, -1))
 	locationsInB := removeBlank(re.Split(b, -1))
 
-	for _, locA := range locationsInA {
-		for _, locB := range locationsInB {
-			locA = strings.ToLower(locA)
-			locB = strings.ToLower(locB)
-			if strings.Contains(locA, locB) || strings.Contains(locB, locA) {
-				return true
-			}
+	slices.Reverse(locationsInA)
+	slices.Reverse(locationsInB)
+
+	la := len(locationsInA)
+	lb := len(locationsInB)
+
+	if la > 0 && lb > 0 {
+		if strings.Contains(locationsInA[0], locationsInB[0]) || strings.Contains(locationsInB[0], locationsInA[0]) {
+			return true
 		}
 	}
+
+	if la > 1 && lb > 1 {
+		if strings.Contains(locationsInA[1], locationsInB[1]) || strings.Contains(locationsInB[1], locationsInA[1]) {
+			return true
+		}
+
+		//if strings.Contains(locationsInA[0], locationsInB[1]) || strings.Contains(locationsInB[0], locationsInA[1]) {
+		//	return true
+		//}
+	}
+
+	//for _, locA := range locationsInA {
+	//	for _, locB := range locationsInB {
+	//		locA = strings.ToLower(locA)
+	//		locB = strings.ToLower(locB)
+	//		if strings.Contains(locA, locB) || strings.Contains(locB, locA) {
+	//			return true
+	//		}
+	//	}
+	//}
 
 	return false
 }
@@ -56,4 +79,8 @@ func removeBlank(a []string) []string {
 	}
 
 	return a
+}
+
+func getCityCountry(s []string) (city, country string) {
+
 }
