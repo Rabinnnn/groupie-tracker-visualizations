@@ -87,12 +87,12 @@ func TestContains(t *testing.T) {
 		},
 
 		{
-			name: "Fuzzy Country Match",
+			name: "Different Cities in same country",
 			args: args{
 				a: "Washington, USA",
 				b: "Texas, USA",
 			},
-			want: true,
+			want: false,
 		},
 
 		{
@@ -134,7 +134,7 @@ func TestContains(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := Contains(tt.args.a, tt.args.b); got != tt.want {
+				if got := Contains2(tt.args.a, tt.args.b); got != tt.want {
 					t.Errorf("Contains() = %v, want %v", got, tt.want)
 				}
 			},

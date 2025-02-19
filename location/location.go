@@ -71,6 +71,15 @@ func Contains(a, b location) bool {
 	return false
 }
 
+// Contains2 checks if a given location is contained in the other location.
+// For example Seattle, Washington, USA is part of Washington, USA
+func Contains2(a, b location) bool {
+	a = strings.ToLower(a)
+	b = strings.ToLower(b)
+
+	return strings.Contains(a, b) || strings.Contains(b, a)
+}
+
 func removeBlank(a []string) []string {
 	for i, b := range a {
 		if strings.TrimSpace(b) == "" {
@@ -81,6 +90,19 @@ func removeBlank(a []string) []string {
 	return a
 }
 
-func getCityCountry(s []string) (city, country string) {
+func getCityCountry(s string) (city, country string) {
+	re := regexp.MustCompile(`[^a-zA-Z0-9\s]+`)
+	locations := removeBlank(re.Split(s, -1))
 
+	slices.Reverse(locations)
+
+	if len(locations) > 0 {
+		country = locations[0]
+	}
+
+	if len(locations) > 1 {
+		city = locations[1]
+	}
+
+	return
 }
