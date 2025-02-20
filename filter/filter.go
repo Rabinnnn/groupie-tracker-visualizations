@@ -1,10 +1,11 @@
-package handlers
+package filter
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"groupie-tracker/api"
+	"groupie-tracker/cache"
 	"groupie-tracker/location"
 	"groupie-tracker/xtime"
 	"log"
@@ -48,7 +49,7 @@ type LocationsOfConcertsFilterQuery struct {
 	In []string `json:"in"`
 }
 
-type FilterAPIRequestData struct {
+type APIRequestData struct {
 	CreationDateFilterQuery        `json:"creation_date"`
 	FirstAlbumDateFilterQuery      `json:"first_album_date"`
 	LocationsOfConcertsFilterQuery `json:"locations_of_concerts"`
@@ -56,12 +57,12 @@ type FilterAPIRequestData struct {
 	Combinator                     string `json:"combinator"`
 }
 
-type FilterAPIResponseData struct {
+type APIResponseData struct {
 	Status  int          `json:"status"`
 	Artists []api.Artist `json:"artists"`
 }
 
-func FilterAPI(w http.ResponseWriter, r *http.Request) {
+func API(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not allowed", http.StatusMethodNotAllowed)
 		return
@@ -71,7 +72,7 @@ func FilterAPI(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Read JSON from the request body
-	var requestData FilterAPIRequestData
+	var requestData APIRequestData
 	err := json.NewDecoder(r.Body).Decode(&requestData)
 	if err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
@@ -79,7 +80,13 @@ func FilterAPI(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Print the received data
-	fmt.Printf("Received data: %#v\n", requestData)
+	log.Printf("Received data: %#v\n", requestData)
+
+	AllArtists, _, _, _, err := cache.GetCachedData()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	filteredArtistsIds := make(map[int]bool)
 	filteredArtists := make([]api.Artist, 0)
@@ -96,44 +103,62 @@ func FilterAPI(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	isAnd := strings.TrimSpace(strings.ToLower(requestData.Combinator)) == "and"
+
 	// Filter by creation date
 	{
-		matchedArtists, err := filterByCreationDate(requestData.CreationDateFilterQuery)
+		matchedArtists, err := filterByCreationDate(AllArtists, requestData.CreationDateFilterQuery)
 		if err != nil {
 			http.Error(w, "Invalid JSON for creation_date query", http.StatusBadRequest)
 			return
 		}
 		addArtists(matchedArtists)
+		if isAnd {
+			AllArtists = matchedArtists
+		}
 	}
 
 	// Filter by first album date
 	{
-		matchedArtists, err := filterByFirstAlbumDate(requestData.FirstAlbumDateFilterQuery)
+		matchedArtists, err := filterByFirstAlbumDate(AllArtists, requestData.FirstAlbumDateFilterQuery)
 		if err != nil {
 			http.Error(w, "Invalid JSON for first_album_date query: "+err.Error(), http.StatusBadRequest)
 			return
 		}
 		addArtists(matchedArtists)
+		if isAnd {
+			AllArtists = matchedArtists
+		}
 	}
 
 	// Filter by number_of_members
 	{
-		matchedArtists, err := filterByNumberOfMembers(requestData.NumberOfMembersFilterQuery)
+		matchedArtists, err := filterByNumberOfMembers(AllArtists, requestData.NumberOfMembersFilterQuery)
 		if err != nil {
 			http.Error(w, "Invalid JSON for number_of_members query", http.StatusBadRequest)
 			return
 		}
 		addArtists(matchedArtists)
+		if isAnd {
+			AllArtists = matchedArtists
+		}
 	}
 
 	// Filter by locations_of_concerts
 	{
-		matchedArtists := filterByLocationsOfConcerts(requestData.LocationsOfConcertsFilterQuery)
+		matchedArtists, err := filterByLocationsOfConcerts(AllArtists, requestData.LocationsOfConcertsFilterQuery)
+		if err != nil {
+			http.Error(w, "InternalServerError: Cache Map error", http.StatusInternalServerError)
+			return
+		}
 		addArtists(matchedArtists)
+		if isAnd {
+			AllArtists = matchedArtists
+		}
 	}
 
 	// Create a response
-	responseData := FilterAPIResponseData{
+	responseData := APIResponseData{
 		Status:  200,
 		Artists: filteredArtists,
 	}
@@ -146,7 +171,7 @@ func FilterAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func filterByCreationDate(q CreationDateFilterQuery) (result []api.Artist, err error) {
+func filterByCreationDate(artists []api.Artist, q CreationDateFilterQuery) (result []api.Artist, err error) {
 	if IsBlank(q.Type) {
 		return
 	}
@@ -159,7 +184,6 @@ func filterByCreationDate(q CreationDateFilterQuery) (result []api.Artist, err e
 		return
 	}
 
-	artists, _, _, _ := getCachedData()
 	for _, artist := range artists {
 		if q.Type == "range" && (artist.CreationDate >= q.From && artist.CreationDate <= q.To) {
 			result = append(result, artist)
@@ -178,14 +202,20 @@ func filterByCreationDate(q CreationDateFilterQuery) (result []api.Artist, err e
 	return
 }
 
-func filterByLocationsOfConcerts(q LocationsOfConcertsFilterQuery) (result []api.Artist) {
+func filterByLocationsOfConcerts(artists []api.Artist, q LocationsOfConcertsFilterQuery) (
+	result []api.Artist, err error,
+) {
 	if len(q.In) == 0 {
 		return
 	}
 
-	artists, _, _, _ := getCachedData()
+	locationsMap := cache.GetCachedLocationsMap()
+	if locationsMap == nil {
+		return nil, errors.New("locationsMap is nil")
+	}
+
 	for _, artist := range artists {
-		locations, ok := locationMapCache[artist.ID]
+		locations, ok := locationsMap[artist.ID]
 		if !ok {
 			log.Printf("artist with ID: %d has no concert location data in cache map", artist.ID)
 			continue
@@ -219,7 +249,7 @@ func filterByLocationsOfConcerts(q LocationsOfConcertsFilterQuery) (result []api
 	return
 }
 
-func filterByNumberOfMembers(q NumberOfMembersFilterQuery) (result []api.Artist, err error) {
+func filterByNumberOfMembers(artists []api.Artist, q NumberOfMembersFilterQuery) (result []api.Artist, err error) {
 	if IsBlank(q.Type) {
 		return
 	}
@@ -228,7 +258,6 @@ func filterByNumberOfMembers(q NumberOfMembersFilterQuery) (result []api.Artist,
 		return []api.Artist{}, errors.New("invalid query type")
 	}
 
-	artists, _, _, _ := getCachedData()
 	if q.Type == "or" {
 		for _, artist := range artists {
 			numberOfMembers := len(artist.Members)
@@ -256,7 +285,7 @@ func filterByNumberOfMembers(q NumberOfMembersFilterQuery) (result []api.Artist,
 	return
 }
 
-func filterByFirstAlbumDate(q FirstAlbumDateFilterQuery) (result []api.Artist, err error) {
+func filterByFirstAlbumDate(artists []api.Artist, q FirstAlbumDateFilterQuery) (result []api.Artist, err error) {
 	if IsBlank(q.Type) {
 		return
 	}
@@ -275,7 +304,6 @@ func filterByFirstAlbumDate(q FirstAlbumDateFilterQuery) (result []api.Artist, e
 		}
 	}
 
-	artists, _, _, _ := getCachedData()
 	for _, artist := range artists {
 		typeRange := func() error {
 			qFrom, err := xtime.Parse(q.From)

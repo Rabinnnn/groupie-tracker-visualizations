@@ -4,7 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"groupie-tracker/fileio"
+	"groupie-tracker/filter"
 	"groupie-tracker/handlers"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -15,6 +17,7 @@ import (
 )
 
 var port = flag.Int("P", 8080, "port to listen on")
+var open = flag.Bool("O", false, "whether to open page in default browser")
 
 // openBrowser function opens a URL in the default web browser based on the operating
 // system that the code is running on. It handles Linux, Windows,and macOS platforms.
@@ -48,14 +51,15 @@ func main() {
 		if err != nil {
 			log.Printf("failed to setup file logging: logging to stderr instead: %v\n", err)
 		}
-		log.SetOutput(logger)
+		mw := io.MultiWriter(os.Stdout, logger)
+		log.SetOutput(mw)
 		defer fileio.Close(logger)
 	}
 
 	http.HandleFunc("/", handlers.IndexHandler)
 	http.HandleFunc("/details", handlers.DetailsHandler)
 	http.HandleFunc("/search-suggestions", handlers.SearchHandler)
-	http.HandleFunc("/api/filter", handlers.FilterAPI)
+	http.HandleFunc("/api/filter", filter.API)
 
 	// Browsers ping for the /favicon.ico icon, redirect to the respective static file
 	http.Handle("/favicon.ico", http.RedirectHandler("/static/images/favicon.svg", http.StatusMovedPermanently))
@@ -77,9 +81,11 @@ func main() {
 
 	servePort := fmt.Sprintf(":%d", *port)
 	url := fmt.Sprintf("http://localhost%s\n", servePort)
-
 	fmt.Printf("Server running at %s\n", url)
 
-	//openBrowser(url)
+	if *open {
+		openBrowser(url)
+	}
+
 	log.Fatal(http.ListenAndServe(servePort, nil))
 }
