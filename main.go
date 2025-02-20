@@ -55,6 +55,7 @@ func main() {
 	http.HandleFunc("/", handlers.IndexHandler)
 	http.HandleFunc("/details", handlers.DetailsHandler)
 	http.HandleFunc("/search-suggestions", handlers.SearchHandler)
+	http.HandleFunc("/api/filter", handlers.FilterAPI)
 
 	// Browsers ping for the /favicon.ico icon, redirect to the respective static file
 	http.Handle("/favicon.ico", http.RedirectHandler("/static/images/favicon.svg", http.StatusMovedPermanently))
@@ -79,6 +80,6 @@ func main() {
 
 	fmt.Printf("Server running at %s\n", url)
 
-	openBrowser(url)
+	//openBrowser(url)
 	log.Fatal(http.ListenAndServe(servePort, nil))
 }

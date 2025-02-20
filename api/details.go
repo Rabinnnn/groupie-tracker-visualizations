@@ -231,18 +231,11 @@ func GetDetails(id string) (Details, error) {
 // Note: This function makes multiple API calls, so it may take longer to complete
 // than individual endpoint calls.
 func GetAllDetails(id string) (AllDetails, error) {
-	details, err := GetDetails(id)
-	if err != nil {
-		return AllDetails{}, err
-	}
-
-	data := AllDetails{
-		Details: details,
-	}
+	var data AllDetails
 
 	// Speed up the other fetch with goroutines
 	wg := sync.WaitGroup{}
-	var errs = [3]error{}
+	var errs = [4]error{}
 
 	wg.Add(1)
 	go func() {
@@ -260,6 +253,12 @@ func GetAllDetails(id string) (AllDetails, error) {
 	go func() {
 		defer wg.Done()
 		data.Location, errs[2] = GetLocation(id)
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		data.Details, errs[3] = GetDetails(id)
 	}()
 
 	wg.Wait()

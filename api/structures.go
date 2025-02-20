@@ -18,6 +18,7 @@ type ErrorContent struct {
 }
 
 type Location struct {
+	Id        int      `json:"id"`
 	Locations []string `json:"locations"`
 }
 
