@@ -107,8 +107,8 @@ func TestContains(t *testing.T) {
 		{
 			name: "Fuzzy Country Match",
 			args: args{
-				a: "Seattle, Washington, USA ",
-				b: "Washington$USA ",
+				a: "Washington, USA ",
+				b: "Seattle, Washington, USA ",
 			},
 			want: true,
 		},
@@ -116,10 +116,28 @@ func TestContains(t *testing.T) {
 		{
 			name: "Fuzzy Country Match",
 			args: args{
+				a: "Washington, USA",
+				b: "Seattle, Washington, USA ",
+			},
+			want: true,
+		},
+
+		{
+			name: "Invalid separator",
+			args: args{
+				a: "Seattle, Washington, USA ",
+				b: "Washington$USA ",
+			},
+			want: false,
+		},
+
+		{
+			name: "Invalid separator",
+			args: args{
 				a: "Seattle, Washington, USA ",
 				b: "Washington.USA ",
 			},
-			want: true,
+			want: false,
 		},
 
 		{
@@ -134,8 +152,75 @@ func TestContains(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := Contains2(tt.args.a, tt.args.b); got != tt.want {
+				if got := Contains(tt.args.a, tt.args.b); got != tt.want {
 					t.Errorf("Contains() = %v, want %v", got, tt.want)
+				}
+			},
+		)
+	}
+}
+
+func TestGetCityCountry(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name        string
+		args        args
+		wantCity    string
+		wantCountry string
+	}{
+		{
+			name:        "Base",
+			args:        args{s: "Washington, USA"},
+			wantCity:    "Washington",
+			wantCountry: "USA",
+		},
+
+		{
+			name:        "City with space in name",
+			args:        args{s: "San Jose, California"},
+			wantCity:    "San Jose",
+			wantCountry: "California",
+		},
+
+		{
+			name:        "Base with dot separator",
+			args:        args{s: "Washington. USA"},
+			wantCity:    "Washington",
+			wantCountry: "USA",
+		},
+
+		{
+			name:        "City with space in name, with dot separator",
+			args:        args{s: "San Jose. California"},
+			wantCity:    "San Jose",
+			wantCountry: "California",
+		},
+
+		{
+			name:        "City, State, Country format",
+			args:        args{s: "Seattle, Washington, USA"},
+			wantCity:    "Seattle, Washington",
+			wantCountry: "USA",
+		},
+
+		{
+			name:        "Fictional City, State, Country format",
+			args:        args{s: "San Jose, Washington, USA"},
+			wantCity:    "San Jose, Washington",
+			wantCountry: "USA",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(
+			tt.name, func(t *testing.T) {
+				gotCity, gotCountry := GetCityCountry(tt.args.s)
+				if gotCity != tt.wantCity {
+					t.Errorf("GetCityCountry() gotCity = %q, want %q", gotCity, tt.wantCity)
+				}
+				if gotCountry != tt.wantCountry {
+					t.Errorf("GetCityCountry() gotCountry = %q, want %q", gotCountry, tt.wantCountry)
 				}
 			},
 		)

@@ -48,27 +48,6 @@ type LocationsOfConcertsFilterQuery struct {
 	In []string `json:"in"`
 }
 
-func Filter(w http.ResponseWriter, r http.Request) {
-	//creation_date
-	//first_album_date
-	//number_of_members
-	//locations_of_concerts
-
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-
-	//query := r.URL.Query().Get("q")
-	//creation_date := r.URL.Query().Get("creation_date")
-	//first_album_date := r.URL.Query().Get("first_album_date")
-	//number_of_members := r.URL.Query().Get("number_of_members")
-	//locations_of_concerts := r.URL.Query().Get("locations_of_concerts")
-	//
-	//data, locations, dates, relations := getCachedData()
-
-}
-
 type FilterAPIRequestData struct {
 	CreationDateFilterQuery        `json:"creation_date"`
 	FirstAlbumDateFilterQuery      `json:"first_album_date"`
@@ -213,16 +192,24 @@ func filterByLocationsOfConcerts(q LocationsOfConcertsFilterQuery) (result []api
 		}
 
 		broke := false
-		for _, loc := range locations {
+		for _, hyphenatedLocation := range locations {
+			loc := hyphenatedLocation
 			city, country := location.Parse(loc)
 			loc = fmt.Sprintf("%s, %s", city, country)
 			for _, in := range q.In {
-				if location.Contains(loc, in) {
+				// The user may have entered the location in the hyphenated location format
+				possibleHyphenatedLocation := in
+				city, country := location.GetCityCountry(in)
+				in = fmt.Sprintf("%s, %s", city, country)
+
+				if location.Contains(loc, in) || location.Contains(hyphenatedLocation, possibleHyphenatedLocation) {
 					result = append(result, artist)
+					// break from the outer loop as well
 					broke = true
 					break
 				}
 			}
+			// This artist has already been included in the result, other checks are unnecessary
 			if broke {
 				break
 			}
