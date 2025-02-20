@@ -33,6 +33,11 @@ func GetCachedData() ([]api.Artist, []api.Location, []api.Date, []api.Relations,
 	return artistCache, locationCache, dateCache, relationCache, err
 }
 
+// GetCachedLocationsMap returns the map cached locations data
+func GetCachedLocationsMap() map[int][]string {
+	return locationMapCache
+}
+
 func updateCache() error {
 	if isCacheInitialized && time.Since(cacheTime) < cacheDuration {
 		return nil
