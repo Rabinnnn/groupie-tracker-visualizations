@@ -6,6 +6,7 @@ import (
 	"groupie-tracker/fileio"
 	"groupie-tracker/filter"
 	"groupie-tracker/handlers"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -50,7 +51,8 @@ func main() {
 		if err != nil {
 			log.Printf("failed to setup file logging: logging to stderr instead: %v\n", err)
 		}
-		log.SetOutput(logger)
+		mw := io.MultiWriter(os.Stdout, logger)
+		log.SetOutput(mw)
 		defer fileio.Close(logger)
 	}
 
