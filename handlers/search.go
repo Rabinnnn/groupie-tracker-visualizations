@@ -2,30 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
-	"groupie-tracker/api"
+	"groupie-tracker/cache"
 	"net/http"
 	"strconv"
 	"strings"
-	"sync"
-	"sync/atomic"
-	"time"
 )
-
-var (
-	artistCache      []api.Artist
-	locationCache    []api.Location
-	locationMapCache map[int][]string
-	dateCache        []api.Date
-	relationCache    []api.Relations
-	// cacheTime keeps track of when last the offline cache was updated with online content
-	cacheTime          time.Time
-	cacheMutex         sync.RWMutex
-	isCacheInitialized bool
-)
-
-// cacheDuration how long the application will work with offline
-// data before getting new data from the external API
-const cacheDuration = 30 * time.Minute
 
 type SearchHandlerResponse struct {
 	Suggestion string `json:"suggestion"`
@@ -96,7 +77,11 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var suggestions []SearchHandlerResponse
-	artists, locations, _, _ := getCachedData()
+	artists, locations, _, _, err := cache.GetCachedData()
+	if err != nil {
+		_ = json.NewEncoder(w).Encode(suggestions)
+		return
+	}
 
 	for _, artist := range artists {
 		// Artist/band name
@@ -157,76 +142,4 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = json.NewEncoder(w).Encode(suggestions)
-}
-
-func getCachedData() ([]api.Artist, []api.Location, []api.Date, []api.Relations) {
-	updateCache()
-	return artistCache, locationCache, dateCache, relationCache
-}
-
-func updateCache() {
-	if isCacheInitialized && time.Since(cacheTime) < cacheDuration {
-		return
-	}
-
-	cacheMutex.Lock()
-	defer cacheMutex.Unlock()
-
-	// keep track of how many errors have
-	//been encountered by the go routines
-	var errCount atomic.Int32
-	var wg sync.WaitGroup
-	wg.Add(4)
-
-	go func() {
-		defer wg.Done()
-		artists, err := api.GetArtists()
-		if err != nil {
-			errCount.Add(1)
-			return
-		}
-		artistCache = artists
-	}()
-
-	go func() {
-		defer wg.Done()
-		locations, err := api.GetAllLocations()
-		if err != nil {
-			errCount.Add(1)
-			return
-		}
-		locationCache = locations
-	}()
-
-	go func() {
-		defer wg.Done()
-		dates, err := api.GetAllDates()
-		if err != nil {
-			errCount.Add(1)
-			return
-		}
-		dateCache = dates
-	}()
-
-	go func() {
-		defer wg.Done()
-		relations, err := api.GetAllRelations()
-		if err != nil {
-			errCount.Add(1)
-			return
-		}
-		relationCache = relations
-	}()
-
-	wg.Wait()
-	if errCount.Load() == 0 {
-		cacheTime = time.Now()
-		isCacheInitialized = true
-
-		// map the locations so that the keys are the id's of the artists
-		locationMapCache = make(map[int][]string)
-		for _, loc := range locationCache {
-			locationMapCache[loc.Id] = loc.Locations
-		}
-	}
 }

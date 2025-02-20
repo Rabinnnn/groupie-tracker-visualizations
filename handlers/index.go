@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"groupie-tracker/api"
+	"groupie-tracker/cache"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -39,7 +40,6 @@ type TemplateData struct {
 //   - 404 Not Found: URL path is not "/"
 //   - 500 Internal Server Error: Server-side processing errors
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	updateCache()
 	if r.Method != "GET" {
 		RenderErrorPage(w, "Method Not Allowed!", http.StatusMethodNotAllowed)
 		return
@@ -51,7 +51,11 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := r.URL.Query().Get("query") // Get the query parameter
-	artists, locations, _, _ := getCachedData()
+	artists, locations, _, _, err := cache.GetCachedData()
+	if err != nil {
+		RenderErrorPage(w, "Internal Server Error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 	for i := range artists {
 		// Ensure we don't exceed the length of the locations slice
 		if i < len(locations) {
