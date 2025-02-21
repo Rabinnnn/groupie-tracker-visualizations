@@ -127,9 +127,11 @@ func API(w http.ResponseWriter, r *http.Request) {
 			makeAPIErrorResponse(w, http.StatusBadRequest, "Invalid JSON for creation_date query")
 			return
 		}
-		addArtists(matchedArtists)
+
 		if isAnd {
 			AllArtists = matchedArtists
+		} else {
+			addArtists(matchedArtists)
 		}
 	}
 
@@ -140,9 +142,11 @@ func API(w http.ResponseWriter, r *http.Request) {
 			makeAPIErrorResponse(w, http.StatusBadRequest, "Invalid JSON for first_album_date query: "+err.Error())
 			return
 		}
-		addArtists(matchedArtists)
+
 		if isAnd {
 			AllArtists = matchedArtists
+		} else {
+			addArtists(matchedArtists)
 		}
 	}
 
@@ -153,9 +157,11 @@ func API(w http.ResponseWriter, r *http.Request) {
 			makeAPIErrorResponse(w, http.StatusBadRequest, "Invalid JSON for number_of_members query")
 			return
 		}
-		addArtists(matchedArtists)
+
 		if isAnd {
 			AllArtists = matchedArtists
+		} else {
+			addArtists(matchedArtists)
 		}
 	}
 
@@ -166,10 +172,16 @@ func API(w http.ResponseWriter, r *http.Request) {
 			makeAPIErrorResponse(w, http.StatusBadRequest, "InternalServerError: Cache Map error")
 			return
 		}
-		addArtists(matchedArtists)
+
 		if isAnd {
 			AllArtists = matchedArtists
+		} else {
+			addArtists(matchedArtists)
 		}
+	}
+
+	if isAnd {
+		addArtists(AllArtists)
 	}
 
 	// Create a response
