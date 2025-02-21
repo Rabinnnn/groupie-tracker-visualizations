@@ -36,6 +36,27 @@ func TestParse(t *testing.T) {
 			want:    time.Time{},
 			wantErr: true,
 		},
+
+		{
+			name:    "3f-05-1967",
+			args:    args{s: "3f-05-1967"},
+			want:    time.Time{},
+			wantErr: true,
+		},
+
+		{
+			name:    "30-0f-1967",
+			args:    args{s: "30-0f-1967"},
+			want:    time.Time{},
+			wantErr: true,
+		},
+
+		{
+			name:    "30-01-196f",
+			args:    args{s: "30-01-196f"},
+			want:    time.Time{},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(
