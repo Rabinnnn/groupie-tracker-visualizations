@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+// Parse returns the time represented in the given string. The date in the string,
+// is expected to follow the time format DD-MM-YYYY. Returns an error if parsing the time in the format fails
 func Parse(s string) (time.Time, error) {
 	parts := strings.Split(s, "-")
 	if len(parts) != 3 {

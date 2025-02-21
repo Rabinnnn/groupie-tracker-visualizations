@@ -62,9 +62,24 @@ type APIResponseData struct {
 	Artists []api.Artist `json:"artists"`
 }
 
+type APIErrorResponse struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+}
+
+func makeAPIErrorResponse(w http.ResponseWriter, statusCode int, message string) {
+	w.WriteHeader(statusCode)
+	w.Header().Set("Content-Type", "application/json")
+	response := APIErrorResponse{
+		Status:  statusCode,
+		Message: message,
+	}
+	_ = json.NewEncoder(w).Encode(response)
+}
+
 func API(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method Not allowed", http.StatusMethodNotAllowed)
+		makeAPIErrorResponse(w, http.StatusMethodNotAllowed, "Method Not Allowed")
 		return
 	}
 
@@ -75,16 +90,13 @@ func API(w http.ResponseWriter, r *http.Request) {
 	var requestData APIRequestData
 	err := json.NewDecoder(r.Body).Decode(&requestData)
 	if err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		makeAPIErrorResponse(w, http.StatusBadRequest, "Invalid JSON")
 		return
 	}
 
-	// Print the received data
-	log.Printf("Received data: %#v\n", requestData)
-
 	AllArtists, _, _, _, err := cache.GetCachedData()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		makeAPIErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -106,55 +118,67 @@ func API(w http.ResponseWriter, r *http.Request) {
 	isAnd := strings.TrimSpace(strings.ToLower(requestData.Combinator)) == "and"
 
 	// Filter by creation date
-	{
+	if requestData.CreationDateFilterQuery.Type != "" {
 		matchedArtists, err := filterByCreationDate(AllArtists, requestData.CreationDateFilterQuery)
 		if err != nil {
-			http.Error(w, "Invalid JSON for creation_date query", http.StatusBadRequest)
+			makeAPIErrorResponse(w, http.StatusBadRequest, "Invalid JSON for creation_date query")
 			return
 		}
-		addArtists(matchedArtists)
+
 		if isAnd {
 			AllArtists = matchedArtists
+		} else {
+			addArtists(matchedArtists)
 		}
 	}
 
 	// Filter by first album date
-	{
+	if requestData.FirstAlbumDateFilterQuery.Type != "" {
 		matchedArtists, err := filterByFirstAlbumDate(AllArtists, requestData.FirstAlbumDateFilterQuery)
 		if err != nil {
-			http.Error(w, "Invalid JSON for first_album_date query: "+err.Error(), http.StatusBadRequest)
+			makeAPIErrorResponse(w, http.StatusBadRequest, "Invalid JSON for first_album_date query: "+err.Error())
 			return
 		}
-		addArtists(matchedArtists)
+
 		if isAnd {
 			AllArtists = matchedArtists
+		} else {
+			addArtists(matchedArtists)
 		}
 	}
 
 	// Filter by number_of_members
-	{
+	if requestData.NumberOfMembersFilterQuery.Type != "" {
 		matchedArtists, err := filterByNumberOfMembers(AllArtists, requestData.NumberOfMembersFilterQuery)
 		if err != nil {
-			http.Error(w, "Invalid JSON for number_of_members query", http.StatusBadRequest)
+			makeAPIErrorResponse(w, http.StatusBadRequest, "Invalid JSON for number_of_members query")
 			return
 		}
-		addArtists(matchedArtists)
+
 		if isAnd {
 			AllArtists = matchedArtists
+		} else {
+			addArtists(matchedArtists)
 		}
 	}
 
 	// Filter by locations_of_concerts
-	{
+	if len(requestData.LocationsOfConcertsFilterQuery.In) > 0 {
 		matchedArtists, err := filterByLocationsOfConcerts(AllArtists, requestData.LocationsOfConcertsFilterQuery)
 		if err != nil {
-			http.Error(w, "InternalServerError: Cache Map error", http.StatusInternalServerError)
+			makeAPIErrorResponse(w, http.StatusBadRequest, "InternalServerError: Cache Map error")
 			return
 		}
-		addArtists(matchedArtists)
+
 		if isAnd {
 			AllArtists = matchedArtists
+		} else {
+			addArtists(matchedArtists)
 		}
+	}
+
+	if isAnd {
+		addArtists(AllArtists)
 	}
 
 	// Create a response

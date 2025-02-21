@@ -240,25 +240,25 @@ func GetAllDetails(id string) (AllDetails, error) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		data.Dates, errs[0] = GetDates(id)
+		data.Details, errs[0] = GetDetails(id)
 	}()
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		data.Relations, errs[1] = GetRelations(id)
+		data.Dates, errs[1] = GetDates(id)
 	}()
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		data.Location, errs[2] = GetLocation(id)
+		data.Relations, errs[2] = GetRelations(id)
 	}()
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		data.Details, errs[3] = GetDetails(id)
+		data.Location, errs[3] = GetLocation(id)
 	}()
 
 	wg.Wait()
