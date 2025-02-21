@@ -94,9 +94,6 @@ func API(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Print the received data
-	log.Printf("Received data: %#v\n", requestData)
-
 	AllArtists, _, _, _, err := cache.GetCachedData()
 	if err != nil {
 		makeAPIErrorResponse(w, http.StatusBadRequest, err.Error())
