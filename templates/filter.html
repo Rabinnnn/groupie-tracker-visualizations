@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Artists | Groupie</title>
+    <link rel="stylesheet" href="/static/css/filter.css">
+</head>
+<body>
+<header>
+    <div class="logo">Artist Search</div>
+</header>
+
+<div id="catchy">
+    <div class="text">
+        <h1>Discover Your Favorite Artists</h1>
+        <button>Explore Now</button>
+    </div>
+    <img src="https://via.placeholder.com/400" alt="Catchy Image">
+</div>
+
+<div id="search-container">
+    <div id="search-bar">
+        <span class="icon">🔍</span>
+        <label for="search-input"></label>
+        <input type="text" id="search-input" placeholder="Search artists...">
+        <span class="icon" id="filter-toggle">⚙️</span>
+    </div>
+    <div id="filters">
+        <div class="filter-group">
+            <label>Creation Date Range:</label>
+            <div class="range-slider">
+                <label for="creation-date-min"></label>
+                <input type="number" id="creation-date-min" placeholder="Min (e.g., 1995)">
+                <label for="creation-date-max"></label>
+                <input type="number" id="creation-date-max" placeholder="Max (e.g., 2000)">
+            </div>
+        </div>
+        <div class="filter-group">
+            <label>First Album Year Range:</label>
+            <div class="range-slider">
+                <label for="album-year-min"></label>
+                <input type="number" id="album-year-min" placeholder="Min (e.g., 1990)">
+                <label for="album-year-max"></label>
+                <input type="number" id="album-year-max" placeholder="Max (e.g., 1992)">
+            </div>
+        </div>
+        <div class="filter-group">
+            <label for="members-count">Number of Members:</label>
+            <input type="number" id="members-count" placeholder="Exact number (e.g., 6)">
+        </div>
+        <div class="filter-group">
+            <label for="concert-location">Concert Location:</label>
+            <input type="text" id="concert-location" placeholder="e.g., Texas, USA">
+        </div>
+    </div>
+</div>
+
+<div id="progress">
+    <div class="loader"></div>
+</div>
+
+<div id="results"></div>
+
+<script>
+    // Mock Data
+    const artists = Array.from({ length: 50 }, (_, i) => ({
+        id: i + 1,
+        name: `Artist ${i + 1}`,
+        creationDate: Math.floor(Math.random() * (2020 - 1970 + 1)) + 1970,
+        firstAlbumYear: Math.floor(Math.random() * (2020 - 1980 + 1)) + 1980,
+        members: Math.floor(Math.random() * 10) + 1,
+        concertLocation: ['Texas, USA', 'Washington, USA', 'California, USA'][Math.floor(Math.random() * 3)],
+        image: `https://via.placeholder.com/150?text=Artist+${i + 1}`
+    }));
+
+    // DOM Elements
+    const searchInput = document.getElementById('search-input');
+    const filterToggle = document.getElementById('filter-toggle');
+    const filters = document.getElementById('filters');
+    const progress = document.getElementById('progress');
+    const results = document.getElementById('results');
+
+    // Event Listeners
+    filterToggle.addEventListener('click', () => {
+        filters.style.display = filters.style.display === 'none' ? 'block' : 'none';
+    });
+
+    searchInput.addEventListener('input', () => {
+        showSuggestions();
+        filterArtists();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+        if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+            e.preventDefault();
+            searchInput.focus();
+            filters.style.display = 'block';
+        }
+    });
+
+    // Filter Artists
+    function filterArtists() {
+        progress.style.display = 'block';
+        results.innerHTML = '';
+
+        setTimeout(() => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const creationDateMin = parseInt(document.getElementById('creation-date-min').value) || 0;
+            const creationDateMax = parseInt(document.getElementById('creation-date-max').value) || Infinity;
+            const albumYearMin = parseInt(document.getElementById('album-year-min').value) || 0;
+            const albumYearMax = parseInt(document.getElementById('album-year-max').value) || Infinity;
+            const membersCount = parseInt(document.getElementById('members-count').value) || 0;
+            const concertLocation = document.getElementById('concert-location').value.toLowerCase();
+
+            const filteredArtists = artists.filter(artist => {
+                return (
+                    artist.name.toLowerCase().includes(searchTerm) &&
+                    artist.creationDate >= creationDateMin &&
+                    artist.creationDate <= creationDateMax &&
+                    artist.firstAlbumYear >= albumYearMin &&
+                    artist.firstAlbumYear <= albumYearMax &&
+                    (membersCount === 0 || artist.members === membersCount) &&
+                    (concertLocation === '' || artist.concertLocation.toLowerCase().includes(concertLocation))
+                );
+            });
+
+            displayResults(filteredArtists);
+            progress.style.display = 'none';
+        }, 500);
+    }
+
+    // Display Results
+    function displayResults(filteredArtists) {
+        if (filteredArtists.length === 0) {
+            results.innerHTML = '<p>No artists found.</p>';
+            return;
+        }
+
+        results.innerHTML = filteredArtists.map(artist => `
+        <div class="artist-card">
+          <img src="${artist.image}" alt="${artist.name}">
+          <h3>${artist.name}</h3>
+        </div>
+      `).join('');
+    }
+
+    // Show Search Suggestions
+    function showSuggestions() {
+        // Implement search suggestions logic here
+    }
+
+    // Initial Render
+    filterArtists();
+</script>
+</body>
+</html>
