@@ -2,56 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Filter Artists | Groupie</title>
-    <link rel="stylesheet" href="/static/css/filter.css">
+    <script crossorigin="anonymous" src="https://kit.fontawesome.com/85624eb666.js"></script>
+    <link href="/static/css/fonts.css" rel="stylesheet">
+    <link href="/static/css/filter.css" rel="stylesheet">
 </head>
 <body>
+
 <header>
-    <div class="logo">Artist Search</div>
+    <img alt="favicon" height="24" src="/static/images/favicon.svg" width="24">
+    <span class="logo-text">Artist Tracker</span>
 </header>
 
 <div id="catchy">
     <div class="text">
-        <h1>Discover Your Favorite Artists</h1>
+        <h1 style="font-family: Shefian, Arial, serif">Discover Your Favorite Artists</h1>
+        <!--        <p>Realtime Data</p>-->
+        <p style="font-size: smaller">Score your concert tickets before anyone else!</p>
+        <br>
         <button>Explore Now</button>
     </div>
-    <img src="https://via.placeholder.com/400" alt="Catchy Image">
+    <img alt="Groupie Art" src="/static/images/groupie-art.png">
 </div>
 
 <div id="search-container">
-    <div id="search-bar">
-        <span class="icon">🔍</span>
-        <label for="search-input"></label>
-        <input type="text" id="search-input" placeholder="Search artists...">
-        <span class="icon" id="filter-toggle">⚙️</span>
+    <!--    <div id="search-bar">-->
+    <!--        <span class="icon">🔍</span>-->
+    <!--        <label for="search-input"></label>-->
+    <!--        <input type="text" id="search-input" placeholder="Search artists...">-->
+    <!--        <span class="icon" id="filter-toggle">⚙️</span>-->
+    <!--    </div>-->
+    <div class="search-bar" onclick="setFocusToElement('search-input');">
+        <i class="fas fa-search icon"></i>
+        <input aria-label="Search" id="search-input" placeholder="Search..." type="text">
+        <i class="fas fa-filter icon"></i>
     </div>
+
+    <div class="search-suggestions" id="search-suggestions">
+        <ul id="search-suggestions-list"></ul>
+    </div>
+
+    <!-- Search filters -->
     <div id="filters">
         <div class="filter-group">
             <label>Creation Date Range:</label>
             <div class="range-slider">
                 <label for="creation-date-min"></label>
-                <input type="number" id="creation-date-min" placeholder="Min (e.g., 1995)">
+                <input id="creation-date-min" placeholder="Min (e.g., 1995)" type="number">
                 <label for="creation-date-max"></label>
-                <input type="number" id="creation-date-max" placeholder="Max (e.g., 2000)">
+                <input id="creation-date-max" placeholder="Max (e.g., 2000)" type="number">
             </div>
         </div>
         <div class="filter-group">
             <label>First Album Year Range:</label>
             <div class="range-slider">
                 <label for="album-year-min"></label>
-                <input type="number" id="album-year-min" placeholder="Min (e.g., 1990)">
+                <input id="album-year-min" placeholder="Min (e.g., 1990)" type="number">
                 <label for="album-year-max"></label>
-                <input type="number" id="album-year-max" placeholder="Max (e.g., 1992)">
+                <input id="album-year-max" placeholder="Max (e.g., 1992)" type="number">
             </div>
         </div>
         <div class="filter-group">
             <label for="members-count">Number of Members:</label>
-            <input type="number" id="members-count" placeholder="Exact number (e.g., 6)">
+            <input id="members-count" placeholder="Exact number (e.g., 6)" type="number">
         </div>
         <div class="filter-group">
             <label for="concert-location">Concert Location:</label>
-            <input type="text" id="concert-location" placeholder="e.g., Texas, USA">
+            <input id="concert-location" placeholder="e.g., Texas, USA" type="text">
         </div>
     </div>
 </div>
@@ -60,102 +78,383 @@
     <div class="loader"></div>
 </div>
 
+<!-- Template to create a suggestion element -->
+<template id="tpl-001">
+    <ul class="tpl-root">
+        <li class="tpl-001-li">
+            <span>
+                <i class="fas fa-clock-rotate-left"></i>
+                <span>Suggestion</span>
+            </span>
+            <i class="fas fa-xmark"></i>
+        </li>
+    </ul>
+</template>
+
+
 <div id="results"></div>
 
+<!-- Dummy data -->
+<div class="item-list">
+    <ul id="item-list">
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+        <li>Item 4</li>
+        <li>Item 5</li>
+
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+        <li>Item 4</li>
+        <li>Item 5</li>
+
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+        <li>Item 4</li>
+        <li>Item 5</li>
+
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+        <li>Item 4</li>
+        <li>Item 5</li>
+
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+        <li>Item 4</li>
+        <li>Item 5</li>
+
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+        <li>Item 4</li>
+        <li>Item 5</li>
+
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+        <li>Item 4</li>
+        <li>Item 5</li>
+
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+        <li>Item 4</li>
+        <li>Item 5</li>
+    </ul>
+</div>
+
+<!-- Utility functions -->
 <script>
-    // Mock Data
-    const artists = Array.from({ length: 50 }, (_, i) => ({
-        id: i + 1,
-        name: `Artist ${i + 1}`,
-        creationDate: Math.floor(Math.random() * (2020 - 1970 + 1)) + 1970,
-        firstAlbumYear: Math.floor(Math.random() * (2020 - 1980 + 1)) + 1980,
-        members: Math.floor(Math.random() * 10) + 1,
-        concertLocation: ['Texas, USA', 'Washington, USA', 'California, USA'][Math.floor(Math.random() * 3)],
-        image: `https://via.placeholder.com/150?text=Artist+${i + 1}`
-    }));
+    function setFocusToElement(elementId) {
+        // Get the element by its ID
+        let element = document.getElementById(elementId);
 
-    // DOM Elements
-    const searchInput = document.getElementById('search-input');
-    const filterToggle = document.getElementById('filter-toggle');
-    const filters = document.getElementById('filters');
-    const progress = document.getElementById('progress');
-    const results = document.getElementById('results');
-
-    // Event Listeners
-    filterToggle.addEventListener('click', () => {
-        filters.style.display = filters.style.display === 'none' ? 'block' : 'none';
-    });
-
-    searchInput.addEventListener('input', () => {
-        showSuggestions();
-        filterArtists();
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'k') {
-            e.preventDefault();
-            searchInput.focus();
-        }
-        if (e.ctrlKey && e.shiftKey && e.key === 'F') {
-            e.preventDefault();
-            searchInput.focus();
-            filters.style.display = 'block';
-        }
-    });
-
-    // Filter Artists
-    function filterArtists() {
-        progress.style.display = 'block';
-        results.innerHTML = '';
-
-        setTimeout(() => {
-            const searchTerm = searchInput.value.toLowerCase();
-            const creationDateMin = parseInt(document.getElementById('creation-date-min').value) || 0;
-            const creationDateMax = parseInt(document.getElementById('creation-date-max').value) || Infinity;
-            const albumYearMin = parseInt(document.getElementById('album-year-min').value) || 0;
-            const albumYearMax = parseInt(document.getElementById('album-year-max').value) || Infinity;
-            const membersCount = parseInt(document.getElementById('members-count').value) || 0;
-            const concertLocation = document.getElementById('concert-location').value.toLowerCase();
-
-            const filteredArtists = artists.filter(artist => {
-                return (
-                    artist.name.toLowerCase().includes(searchTerm) &&
-                    artist.creationDate >= creationDateMin &&
-                    artist.creationDate <= creationDateMax &&
-                    artist.firstAlbumYear >= albumYearMin &&
-                    artist.firstAlbumYear <= albumYearMax &&
-                    (membersCount === 0 || artist.members === membersCount) &&
-                    (concertLocation === '' || artist.concertLocation.toLowerCase().includes(concertLocation))
-                );
-            });
-
-            displayResults(filteredArtists);
-            progress.style.display = 'none';
-        }, 500);
-    }
-
-    // Display Results
-    function displayResults(filteredArtists) {
-        if (filteredArtists.length === 0) {
-            results.innerHTML = '<p>No artists found.</p>';
+        // If the element does not exist, exit
+        if (!element) {
+            console.log("Element with id:", elementId, " does not exist")
             return;
         }
 
-        results.innerHTML = filteredArtists.map(artist => `
-        <div class="artist-card">
-          <img src="${artist.image}" alt="${artist.name}">
-          <h3>${artist.name}</h3>
-        </div>
-      `).join('');
-    }
+        // Ensure the element is focusable by setting tabindex if necessary
+        if (element.tabIndex === -1 && !['input', 'textarea', 'select', 'button'].includes(element.tagName.toLowerCase())) {
+            // Set tabindex to 0 for non-input elements to make them focusable without disrupting tab order
+            element.tabIndex = 0;
+        }
 
-    // Show Search Suggestions
-    function showSuggestions() {
-        // Implement search suggestions logic here
+        // Set focus on the element
+        try {
+            element.focus();
+            console.log(`Focus set on ${elementId}`);
+        } catch (e) {
+            console.error(`Failed to set focus: ${e.message}`);
+        }
     }
-
-    // Initial Render
-    filterArtists();
 </script>
+
+
+<!-- Search bar suggestions -->
+<script>
+    // Creates a new DOM element from the template `tpl-001`
+    function createSuggestionElement(iconClass, text, removeCloseIcon, onClickListener) {
+        // Get the template content
+        const template = document.getElementById('tpl-001');
+        const clone = document.importNode(template.content, true);
+
+        // Find elements within the cloned template
+        const iconElement = clone.querySelector('.fa-clock-rotate-left');
+        const textElement = clone.querySelector('span span');
+        const closeIconElement = clone.querySelector('.fa-xmark');
+
+        // Replace the icon class
+        if (iconClass) {
+            iconElement.classList.replace('fa-clock-rotate-left', iconClass);
+        }
+
+        // Replace the text
+        if (text) {
+            textElement.textContent = text;
+        }
+
+        // Conditionally remove the close icon classes
+        if (removeCloseIcon && closeIconElement) {
+            closeIconElement.classList.remove('fas', 'fa-xmark');
+        }
+
+        // Add the optional onclick listener to the close icon
+        if (onClickListener && closeIconElement) {
+            closeIconElement.addEventListener('click', onClickListener);
+        }
+
+        return clone;
+    }
+
+    async function _searchBarSuggestions() {
+        const searchInput = document.getElementById('search-input');
+        const suggestionsContainer = document.getElementById('search-suggestions');
+        const suggestionsList = document.getElementById('search-suggestions-list');
+
+        let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+        // Track the currently highlighted suggestion
+        let currentHighlightedIndex = -1;
+
+        // fetch search suggestions
+        async function fetchSuggestions(query) {
+            if (!query) {
+                displaySearchHistory();
+                return;
+            }
+
+            addToSearchHistory(query);
+            try {
+                let suggestions = [
+                    "hello",
+                    "hi",
+                    "go",
+                    "come"
+                ]
+                displaySuggestions(suggestions, false);
+
+                const response = await fetch(`/search-suggestions?q=${query}`);
+                // const data = await response.json();
+
+            } catch (error) {
+                console.error('Error fetching suggestions:', error);
+            }
+        }
+
+        // display search suggestions.
+        // fromHistory: whether the search suggestions have been pulled from search history
+        function displaySuggestions(suggestions, fromHistory) {
+            suggestionsList.innerHTML = '';
+            suggestions.forEach((suggestion, index) => {
+                let suggestionElement = fromHistory
+                    ? createSuggestionElement(undefined, suggestion, false, (e) => {
+                        e.stopPropagation();
+                        removeFromSearchHistory(index);
+                    })
+                    : createSuggestionElement('fa-search', suggestion, true);
+                suggestionElement.tabIndex = 2;
+                const target = suggestionElement.querySelector(".tpl-001-li")
+                if (target) {
+                    target.addEventListener('click', () => {
+                        searchInput.value = suggestion;
+                        suggestionsContainer.style.display = 'none';
+                    });
+                } else {
+                    console.error("Failed to get such element by class name: `tpl-001-li`")
+                }
+                suggestionsList.appendChild(target);
+            });
+            // Show the suggestions and reset highlighted index
+            suggestionsContainer.style.display = 'block';
+            currentHighlightedIndex = -1;
+        }
+
+        // display suggestions from search history
+        function displaySearchHistory() {
+            displaySuggestions(searchHistory, true);
+        }
+
+        // add query to search history
+        function addToSearchHistory(item) {
+            if (!searchHistory.includes(item)) {
+                searchHistory.unshift(item);
+                localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+            }
+        }
+
+        // remove query from search history
+        function removeFromSearchHistory(index) {
+            searchHistory.splice(index, 1);
+            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+            displaySearchHistory();
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value;
+            fetchSuggestions(query);
+        });
+
+        searchInput.addEventListener('focus', () => {
+            if (searchInput.value === '') {
+                displaySearchHistory();
+            } else {
+                const query = searchInput.value;
+                fetchSuggestions(query);
+            }
+        });
+
+        searchInput.addEventListener('blur', () => {
+            setTimeout(() => {
+                suggestionsContainer.style.display = 'none';
+            }, 2000);
+        });
+
+        // Keyboard navigation
+        searchInput.addEventListener('keydown', (e) => {
+            const suggestions = Array.from(suggestionsList.children);
+
+            function highlightSuggestion(index) {
+                if (currentHighlightedIndex >= 0) {
+                    suggestions[currentHighlightedIndex].classList.remove('highlighted');
+                }
+
+                if (index >= 0 && index < suggestions.length) {
+                    const newSuggestion = suggestions[index];
+                    suggestions[index].classList.add('highlighted');
+                    newSuggestion.scrollIntoView({behavior: "smooth", block: 'nearest', inline: 'start'})
+                }
+                currentHighlightedIndex = index;
+            }
+
+            if (e.key === 'ArrowDown') {
+                // Prevent default behavior (e.g., moving cursor to end of input)
+                e.preventDefault();
+                const nextIndex = (currentHighlightedIndex + 1) % suggestions.length;
+                highlightSuggestion(nextIndex);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prevIndex = (currentHighlightedIndex - 1 + suggestions.length) % suggestions.length;
+                highlightSuggestion(prevIndex);
+            } else if (e.key === 'Enter') {
+                if (currentHighlightedIndex >= 0) {
+                    // e.preventDefault();
+                    const selectedSuggestion = suggestions[currentHighlightedIndex];
+                    const suggestionSpan = selectedSuggestion.querySelector("span span");
+                    const suggestion = suggestionSpan.textContent;
+                    searchInput.value = suggestion;
+                    addToSearchHistory(suggestion);
+                    suggestionsContainer.style.display = 'none';
+                    searchInput.focus();
+                }
+            }
+        });
+    }
+
+    _searchBarSuggestions();
+</script>
+
+
+<!-- Search bar filters -->
+<!--<script>-->
+<!--    // Mock Data-->
+<!--    const artists = Array.from({length: 50}, (_, i) => ({-->
+<!--        id: i + 1,-->
+<!--        name: `Artist ${i + 1}`,-->
+<!--        creationDate: Math.floor(Math.random() * (2020 - 1970 + 1)) + 1970,-->
+<!--        firstAlbumYear: Math.floor(Math.random() * (2020 - 1980 + 1)) + 1980,-->
+<!--        members: Math.floor(Math.random() * 10) + 1,-->
+<!--        concertLocation: ['Texas, USA', 'Washington, USA', 'California, USA'][Math.floor(Math.random() * 3)],-->
+<!--        image: `https://via.placeholder.com/150?text=Artist+${i + 1}`-->
+<!--    }));-->
+
+<!--    // DOM Elements-->
+<!--    const searchInput = document.getElementById('search-input');-->
+<!--    const filterToggle = document.getElementById('filter-toggle');-->
+<!--    const filters = document.getElementById('filters');-->
+<!--    const progress = document.getElementById('progress');-->
+<!--    const results = document.getElementById('results');-->
+
+<!--    // Event Listeners-->
+<!--    filterToggle.addEventListener('click', () => {-->
+<!--        filters.style.display = filters.style.display === 'none' ? 'block' : 'none';-->
+<!--    });-->
+
+<!--    searchInput.addEventListener('input', () => {-->
+<!--        showSuggestions();-->
+<!--        filterArtists();-->
+<!--    });-->
+
+<!--    document.addEventListener('keydown', (e) => {-->
+<!--        if (e.ctrlKey && e.key === 'k') {-->
+<!--            e.preventDefault();-->
+<!--            searchInput.focus();-->
+<!--        }-->
+<!--        if (e.ctrlKey && e.shiftKey && e.key === 'F') {-->
+<!--            e.preventDefault();-->
+<!--            searchInput.focus();-->
+<!--            filters.style.display = 'block';-->
+<!--        }-->
+<!--    });-->
+
+<!--    // Filter Artists-->
+<!--    function filterArtists() {-->
+<!--        progress.style.display = 'block';-->
+<!--        results.innerHTML = '';-->
+
+<!--        setTimeout(() => {-->
+<!--            const searchTerm = searchInput.value.toLowerCase();-->
+<!--            const creationDateMin = parseInt(document.getElementById('creation-date-min').value) || 0;-->
+<!--            const creationDateMax = parseInt(document.getElementById('creation-date-max').value) || Infinity;-->
+<!--            const albumYearMin = parseInt(document.getElementById('album-year-min').value) || 0;-->
+<!--            const albumYearMax = parseInt(document.getElementById('album-year-max').value) || Infinity;-->
+<!--            const membersCount = parseInt(document.getElementById('members-count').value) || 0;-->
+<!--            const concertLocation = document.getElementById('concert-location').value.toLowerCase();-->
+
+<!--            const filteredArtists = artists.filter(artist => {-->
+<!--                return (-->
+<!--                    artist.name.toLowerCase().includes(searchTerm) &&-->
+<!--                    artist.creationDate >= creationDateMin &&-->
+<!--                    artist.creationDate <= creationDateMax &&-->
+<!--                    artist.firstAlbumYear >= albumYearMin &&-->
+<!--                    artist.firstAlbumYear <= albumYearMax &&-->
+<!--                    (membersCount === 0 || artist.members === membersCount) &&-->
+<!--                    (concertLocation === '' || artist.concertLocation.toLowerCase().includes(concertLocation))-->
+<!--                );-->
+<!--            });-->
+
+<!--            displayResults(filteredArtists);-->
+<!--            progress.style.display = 'none';-->
+<!--        }, 500);-->
+<!--    }-->
+
+<!--    // Display Results-->
+<!--    function displayResults(filteredArtists) {-->
+<!--        if (filteredArtists.length === 0) {-->
+<!--            results.innerHTML = '<p>No artists found.</p>';-->
+<!--            return;-->
+<!--        }-->
+
+<!--        results.innerHTML = filteredArtists.map(artist => `-->
+<!--        <div class="artist-card">-->
+<!--          <img src="${artist.image}" alt="${artist.name}">-->
+<!--          <h3>${artist.name}</h3>-->
+<!--        </div>-->
+<!--      `).join('');-->
+<!--    }-->
+
+<!--    // Show Search Suggestions-->
+<!--    function showSuggestions() {-->
+<!--        // Implement search suggestions logic here-->
+<!--    }-->
+
+<!--    // Initial Render-->
+<!--    filterArtists();-->
+<!--</script>-->
+
 </body>
 </html>

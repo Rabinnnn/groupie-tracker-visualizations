@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Shefian';
+    src: url('/static/fonts/Shefian.otf') ;
+}
+
+@font-face {
+    font-family: 'CyberAlert';
+    src: url('/static/fonts/CyberAlert.otf') ;
+}
+
+@font-face {
+    font-family: 'Grooved';
+    src: url('/static/fonts/GROOVED.woff2') ;
+}
