@@ -59,6 +59,7 @@ func main() {
 	http.HandleFunc("/", handlers.IndexHandler)
 	http.HandleFunc("/details", handlers.DetailsHandler)
 	http.HandleFunc("/search-suggestions", handlers.SearchHandler)
+	http.HandleFunc("/filter", handlers.Filter)
 	http.HandleFunc("/api/filter", filter.API)
 
 	// Browsers ping for the /favicon.ico icon, redirect to the respective static file
@@ -71,7 +72,7 @@ func main() {
 			//paths `/static` and `/static/` both translate to `/static`
 			reqPath := filepath.Clean(r.URL.Path)
 			switch reqPath {
-			case "/static", "/static/css", "/static/images":
+			case "/static", "/static/css", "/static/fonts", "/static/gifs", "/static/images", "/static/js":
 				handlers.RenderErrorPage(w, "Bad Request", http.StatusBadRequest)
 				return
 			}

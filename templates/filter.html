@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Artists Tracker | Groupie</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+          rel="stylesheet">
+    <link href="/static/css/fonts.css" rel="stylesheet">
+    <link href="/static/css/filter-home.css" rel="stylesheet">
+    <link href="/static/css/filter-search-bar.css" rel="stylesheet">
+    <link href="/static/css/filter-components.css" rel="stylesheet">
+    <link href="/static/css/filter-art.css" rel="stylesheet">
+    <link href="/static/css/dual-slider.css" rel="stylesheet">
+    <link href="/static/css/checkbox.css" rel="stylesheet">
+    <script src="/static/js/dual-slider.js"></script>
+    <script crossorigin="anonymous" src="https://kit.fontawesome.com/85624eb666.js"></script>
+</head>
+<body>
+
+<label for="fl-search-input"></label>
+
+<nav id="navbar">
+    <div id="navbar-content">
+        <img alt="Favicon" class="favicon" src="/static/images/favicon.svg">
+        <div class="site-name">Artists Tracker</div>
+
+        <!-- Neo Search bar -->
+        <div class="fl-search-container">
+            <div class="fl-search-wrapper">
+                <div class="fl-search-bar">
+                    <i class="fas fa-search fl-search-icon"></i>
+                    <input class="fl-search-input"
+                           id="fl-search-input"
+                           placeholder="Discover artists | bands [Ctrl + K]"
+                           type="text">
+                    <span class="fl-clear-icon">
+                        <i class="fas fa-times"></i>
+                    </span>
+                    <div class="fl-filter-layout">
+                        <i class="fas fa-filter"></i>
+                        <span>filter</span>
+                    </div>
+                </div>
+                <div class="fl-suggestions"></div>
+            </div>
+        </div>
+
+        <!-- Neo Search bar Templates -->
+        <template id="fl-suggestion-template">
+            <div class="fl-suggestion-item">
+                <i class="fl-suggestion-icon"></i>
+                <span class="fl-suggestion-content"></span>
+                <i class="fas fa-times fl-remove-history"></i>
+            </div>
+        </template>
+    </div>
+    <div class="fl-filters">
+        <div class="nfl-filters">
+            <div id="nfl-filter-creation-date">
+                <div class="nfl-filters-label">Creation date</div>
+                <div class="dual-slider-container" id="creation-date-slider"></div>
+            </div>
+
+            <div id="nfl-filter-first-album-date">
+                <div class="nfl-filters-label">First album date</div>
+                <div class="dual-slider-container" id="first-album-date-slider"></div>
+            </div>
+            <div id="nfl-filter-members">
+                <div class="nfl-filters-label">No. of Members</div>
+                <div class="nfl-checkbox-list">
+                    <label class="checkbox-container">1
+                        <input checked="checked" id="check-mem-1" type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="checkbox-container">2
+                        <input checked="checked" id="check-mem-2" type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="checkbox-container">3
+                        <input checked="checked" id="check-mem-3" type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="checkbox-container">4
+                        <input checked="checked" id="check-mem-4" type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="checkbox-container">5
+                        <input checked="checked" id="check-mem-5" type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="checkbox-container">6
+                        <input checked="checked" id="check-mem-6" type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="checkbox-container">7
+                        <input checked="checked" id="check-mem-7" type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="checkbox-container">8
+                        <input checked="checked" id="check-mem-8" type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+            <div id="nfl-filter-concert-locations">
+                <div class="nfl-filters-label">Concert locations</div>
+                <label>
+                    <input class="nfl-filters-input"
+                           id="nfl-filters-concert-locations"
+                           placeholder="Nairobi, Kenya; Washington, USA"
+                           type="text">
+                </label>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<section id="hero">
+    <div class="hero-text">
+        <h1 style="font-family: Shefian, Arial, serif">Discover Your Favorite Artists</h1>
+        <p style="font-size: smaller">Score your concert tickets before anyone else!</p>
+        <br>
+        <button class="cta-button" id="cta-button">Explore Now</button>
+    </div>
+    <div class="hero-image">
+        <img alt="Hero Image" src="/static/images/groupie-art.png">
+    </div>
+</section>
+
+<section id="artists">
+    <h2>Artists | Albums</h2>
+    <p style="margin-bottom: 1em;">Discover the latest artists and albums here</p>
+
+    <div class="artContainer">
+        <div class="artProgressBar"></div>
+        <div class="artGrid"></div>
+    </div>
+
+    <template id="artCardTemplate">
+        <div>
+            <a class="artCard" href="#">
+                <img alt="Album cover" src="/static/images/favicon.svg">
+                <div class="artCardContent">
+                    <h3 class="artCardTitle"></h3>
+                </div>
+            </a>
+        </div>
+    </template>
+
+    <template id="artErrorTemplate">
+        <div class="artError">
+            <p>Failed to load artists</p>
+            <button class="artRetryButton">Try Again</button>
+        </div>
+    </template>
+</section>
+
+<!-- All artists data injected from go templates backend -->
+<script id="data" type="application/json">
+    "{{.ArtistsJson}}"
+</script>
+
+<script>
+    window.FilterOptions = {
+        query: "",
+        creationDateFrom: "1958",
+        creationDateTo: "2015",
+        firstAlbumDateFrom: "1963",
+        firstAlbumDateTo: "2018",
+        // All checkboxes are checked at start
+        numberOfMembers: Array(8).fill(1),
+        concertLocation: "",
+    };
+
+    // Add event listeners for all the 8 checkboxes
+    (function () {
+        function handleCheckboxChange(event) {
+            // Extract index from checkbox id
+            const checkboxIndex = parseInt(event.target.id.split('-')[2]) - 1;
+            window.FilterOptions.numberOfMembers[checkboxIndex] = event.target.checked ? 1 : 0;
+            document.dispatchEvent(new CustomEvent('x-filter'));
+        }
+
+        // Set up listeners for all checkboxes
+        for (let i = 1; i <= 8; i++) {
+            const checkbox = document.getElementById(`check-mem-${i}`);
+            checkbox.addEventListener('change', handleCheckboxChange);
+        }
+    })();
+
+    // Function to return the indices of checkboxes that are checked (value is 1)
+    window.GlobalGetNumberOfMembers = function () {
+        const arr = window.FilterOptions.numberOfMembers;
+        return arr.map((value, index) => value === 1 ? index + 1 : -1) // Map to get the indices of checked boxes
+            .filter(index => index !== -1); // Filter out -1 values
+    };
+
+    // Add event listener for changes in the concert location
+    (function () {
+        const inputElement = document.getElementById('nfl-filters-concert-locations');
+        inputElement.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                // Prevent the default form submission behavior (if any)
+                event.preventDefault();
+                window.FilterOptions.concertLocation = inputElement.value;
+                document.dispatchEvent(new CustomEvent('x-filter'));
+            }
+        });
+    })();
+</script>
+
+<!-- Navbar setup -->
+<script>
+    // Scroll to artists list when the CTA button is clicked
+    (function () {
+        const cta = document.getElementById('cta-button');
+        cta.onclick = () => {
+            document.getElementById('artists').scrollIntoView({behavior: "smooth"});
+        }
+    })();
+
+    (function () {
+        const navbar = document.getElementById('navbar');
+        const hero = document.getElementById('hero');
+        let lastScrollTop = 0;
+
+        // Check if hero section is visible in viewport
+        function isHeroVisible() {
+            const rect = hero.getBoundingClientRect();
+            return rect.bottom > 0;
+        }
+
+        window.addEventListener('scroll', function () {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+            // Add or remove raised shadow based on scroll position
+            if (scrollTop > 0) {
+                navbar.classList.add('raised');
+            } else {
+                navbar.classList.remove('raised');
+            }
+
+            // Only toggle hide/show if hero section is out of view
+            if (!isHeroVisible()) {
+                if (scrollTop > lastScrollTop) {
+                    // Scrolling down: hide navbar
+                    navbar.classList.add('hide');
+                } else {
+                    // Scrolling up: show navbar
+                    navbar.classList.remove('hide');
+                }
+            } else {
+                // Always show navbar when hero is visible
+                navbar.classList.remove('hide');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        }, false);
+
+        // Focus the search input when Ctrl + K is pressed
+        window.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                document.getElementById('fl-search-input').focus();
+            }
+        });
+    })();
+</script>
+
+<!-- Artists Display -->
+<script>
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    class ArtistContainer {
+        constructor() {
+            this.container = document.querySelector('.artContainer');
+            this.grid = document.querySelector('.artGrid');
+            this.progressBar = document.querySelector('.artProgressBar');
+            this.cardTemplate = document.querySelector('#artCardTemplate');
+            this.errorTemplate = document.querySelector('#artErrorTemplate');
+            this.lastCallback = undefined;
+        }
+
+        showProgressBar() {
+            this.progressBar.style.display = 'block';
+        }
+
+        hideProgressBar() {
+            this.progressBar.style.display = 'none';
+        }
+
+        showError() {
+            this.grid.innerHTML = '';
+            const error = this.errorTemplate.content.cloneNode(true);
+            error.querySelector('.artRetryButton').addEventListener('click', () => {
+                if (this.lastCallback) {
+                    this.filterCallback(this.lastCallback)
+                }
+            });
+            this.grid.appendChild(error);
+        }
+
+        displayArtists(artists) {
+            this.grid.innerHTML = '';
+            artists.forEach(artist => {
+                const div = this.cardTemplate.content.cloneNode(true);
+                const card = div.querySelector('.artCard');
+                const img = card.querySelector('img');
+                const title = card.querySelector('.artCardTitle');
+
+                img.src = artist.image;
+                img.alt = `${artist.name} album cover`;
+                title.textContent = artist.name;
+                card.href = `/details?id=${artist.id}`;
+
+                this.grid.appendChild(card);
+            });
+        }
+
+        async filterCallback(asyncGetArtistsCallback) {
+            this.lastCallback = asyncGetArtistsCallback;
+            // this.container.scrollIntoView({behavior: 'smooth'});
+            this.showProgressBar();
+
+            try {
+                const artists = await asyncGetArtistsCallback();
+                this.displayArtists(artists);
+            } catch (error) {
+                this.showError();
+            } finally {
+                this.hideProgressBar();
+            }
+        }
+    }
+
+    // Initialize the container
+    window.GlobalArtistContainer = new ArtistContainer();
+
+    // Load all artists embedded by server
+    (function () {
+        // Get raw json from the data element
+        const rawJson = document.getElementById('data').textContent;
+
+        // Remove only the first `"` and the last `"`
+        let firstQuoteIndex = rawJson.indexOf('"');
+        let lastQuoteIndex = rawJson.lastIndexOf('"');
+
+        let json = "";
+        if (firstQuoteIndex !== -1 && lastQuoteIndex !== -1 && firstQuoteIndex !== lastQuoteIndex) {
+            json = rawJson.slice(0, firstQuoteIndex) +
+                rawJson.slice(firstQuoteIndex + 1, lastQuoteIndex) +
+                rawJson.slice(lastQuoteIndex + 1);
+        }
+
+        try {
+            // Get the artists json
+            window.AllArtists = JSON.parse(json);
+            // Display the artists in the artists element section
+            window.GlobalArtistContainer.displayArtists(window.AllArtists);
+        } catch (e) {
+            console.error("Failed to load json data embedded in html by server")
+        }
+    })();
+
+    (function () {
+        const debouncedFilterCallback = debounce(callback =>
+            window.GlobalArtistContainer.filterCallback(callback), 300);
+
+        document.addEventListener('x-filter', async () => {
+            const query = `${window.FilterOptions.query}`;
+            await debouncedFilterCallback(async function () {
+                try {
+                    const response = await fetch(`/api/filter`, {
+                        method: "POST",
+                        body: JSON.stringify({
+                                "creation_date": {
+                                    "from": Number.parseInt(window.FilterOptions.creationDateFrom),
+                                    "to": Number.parseInt(window.FilterOptions.creationDateTo),
+                                    "in": [],
+                                    "type": "range"
+                                },
+                                "first_album_date": {
+                                    "from": `01-01-${window.FilterOptions.firstAlbumDateFrom}`,
+                                    "to": `31-12-${window.FilterOptions.firstAlbumDateTo}`,
+                                    "in": [],
+                                    "type": "range"
+                                },
+                                "number_of_members": {
+                                    "from": 0,
+                                    "to": 0,
+                                    "in": window.GlobalGetNumberOfMembers(),
+                                    "type": "in"
+                                },
+                                "locations_of_concerts": {
+                                    "in": window.FilterOptions.concertLocation
+                                        .split(';')
+                                        .filter(part => part.trim() !== ''),
+                                },
+                                "combinator": "and",
+                                "query": query
+                            }
+                        )
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to filter artists');
+                    }
+                    const responseData = await response.json();
+                    return responseData['artists'];
+                } catch (e) {
+                    console.error("Failed to filter:", e);
+                    throw e;
+                }
+            });
+        });
+    })();
+
+</script>
+
+<!-- Neo Search Bar -->
+<script>
+    // search ranking:
+    //
+    // 1. Elements that match the whole term: score +100
+    // 2. Elements that start with the given term: score +10
+    // 3. Elements that contains the search query: score +2
+    // 4. Elements that end with the search query: score +1
+    function SearchScore(allSuggestions, query, minScore = 2) {
+        if (!allSuggestions) {
+            return []
+        }
+        const searchScores = [];
+        allSuggestions.forEach((suggestionObject) => {
+            const suggestion = String(suggestionObject.suggestion).toLowerCase();
+            query = String(query).toLowerCase();
+
+            let score = 0;
+            if (suggestion === query) {
+                score += 100;
+            }
+
+            if (suggestion.startsWith(query)) {
+                score += 10;
+            }
+
+            if (suggestion.includes(query)) {
+                score += 2;
+            }
+
+            if (suggestion.endsWith(query)) {
+                score += 1;
+            }
+
+            if (score >= minScore) {
+                searchScores.push({
+                    suggestion: `${suggestion} - ${suggestionObject.from}`,
+                    score: score,
+                    text: suggestion,
+                    from: suggestionObject.from,
+                });
+            }
+        });
+
+        searchScores.sort((a, b) => b.score - a.score);
+        return searchScores
+    }
+
+    (function () {
+        const LOCAL_STORAGE_KEY = 'fl-search-history';
+        const MAX_HISTORY_ITEMS = 50;
+
+        // Elements
+        const searchBar = document.querySelector('.fl-search-bar');
+        const searchInput = document.querySelector('.fl-search-input');
+        const clearIcon = document.querySelector('.fl-clear-icon');
+        const filterLayout = document.querySelector('.fl-filter-layout');
+        const suggestionsDiv = document.querySelector('.fl-suggestions');
+        const filtersDiv = document.querySelector('.fl-filters');
+
+        // Templates
+        const suggestionTemplate = document.querySelector('#fl-suggestion-template');
+
+        // Local Storage Functions
+        function getSearchHistory() {
+            return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+        }
+
+        function addToSearchHistory(query) {
+            const history = getSearchHistory();
+            const index = history.indexOf(query);
+            if (index > -1) {
+                history.splice(index, 1);
+            }
+            history.unshift(query);
+            if (history.length > MAX_HISTORY_ITEMS) {
+                history.pop();
+            }
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(history));
+        }
+
+        function removeFromHistory(query) {
+            const history = getSearchHistory();
+            const index = history.indexOf(query);
+            if (index > -1) {
+                history.splice(index, 1);
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(history));
+            }
+        }
+
+        // Search bar click shows suggestions
+        searchBar.addEventListener('click', () => {
+            searchInput.focus();
+            if (!searchInput.value) {
+                showSuggestions('');
+            }
+        });
+
+        // Handle input changes
+        searchInput.addEventListener('input', (e) => {
+            const value = e.target.value;
+            clearIcon.style.display = value ? 'flex' : 'none';
+            showSuggestions(value);
+        });
+
+        // Clear input
+        clearIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            searchInput.value = '';
+            clearIcon.style.display = 'none';
+            suggestionsDiv.style.display = 'none';
+            handleSubmit({query: ''});
+        });
+
+        // Toggle filters
+        filterLayout.addEventListener('click', (e) => {
+            e.stopPropagation();
+            filtersDiv.style.display = filtersDiv.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Show suggestions
+        async function showSuggestions(query) {
+            suggestionsDiv.innerHTML = '';
+
+            let suggestions = [];
+            if (query) {
+                try {
+                    const response = await fetch(`/search-suggestions?q=${encodeURIComponent(query)}`);
+                    if (!response.ok) {
+                        throw new Error('bad server response:' + response.statusText)
+                    }
+                    const json = await response.json();
+                    // console.log('received suggestions:', json)
+                    suggestions = SearchScore(json, query);
+                    suggestions = suggestions.map(s => ({suggestion: s.suggestion, text: s.text, isHistory: false}));
+                    // console.log('commiting suggestions:', suggestions)
+                } catch (e) {
+                    console.error("Failed to fetch:", e)
+                }
+            } else {
+                suggestions = getSearchHistory().map(s => ({suggestion: s, text: s, isHistory: true}));
+            }
+
+            if (suggestions.length) {
+                suggestions.forEach(suggestion => {
+                    const element = suggestionTemplate.content.cloneNode(true);
+                    const item = element.querySelector('.fl-suggestion-item');
+                    const icon = item.querySelector('.fl-suggestion-icon');
+                    const content = item.querySelector('.fl-suggestion-content');
+                    const removeBtn = item.querySelector('.fl-remove-history');
+
+                    content.textContent = suggestion.suggestion;
+                    icon.classList.add('fas', suggestion.isHistory ? 'fa-history' : 'fa-search');
+                    removeBtn.style.display = suggestion.isHistory ? 'block' : 'none';
+
+                    item.onclick = () => {
+                        searchInput.value = suggestion.text;
+                        suggestionsDiv.style.display = 'none';
+                        handleSubmit({query: suggestion.text});
+                    };
+
+                    if (suggestion.isHistory) {
+                        removeBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            removeFromHistory(suggestion.text);
+                            showSuggestions('');
+                        };
+                    }
+
+                    suggestionsDiv.appendChild(item);
+                });
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        }
+
+        // Handle keyboard navigation
+        let activeIndex = -1;
+        searchInput.addEventListener('keydown', (e) => {
+            const suggestions = document.querySelectorAll('.fl-suggestion-item');
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault()
+                activeIndex = Math.min(activeIndex + 1, suggestions.length - 1);
+                updateActiveSuggestion(suggestions);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault()
+                activeIndex = Math.max(activeIndex - 1, -1);
+                updateActiveSuggestion(suggestions);
+            } else if (e.key === 'Enter') {
+                if (activeIndex >= 0) {
+                    e.preventDefault()
+                    suggestions[activeIndex].click();
+                } else if (searchInput.value) {
+                    handleSubmit({query: searchInput.value});
+                }
+            }
+        });
+
+        function updateActiveSuggestion(suggestions) {
+            suggestions.forEach(s => s.classList.remove('active'));
+            if (activeIndex >= 0) {
+                suggestions[activeIndex].classList.add('active');
+                suggestions[activeIndex].scrollIntoView({block: "nearest", inline: "nearest"});
+            }
+        }
+
+        // Close suggestions and filters when clicking outside
+        document.addEventListener('click', (e) => {
+            const navbar = document.getElementById('navbar');
+            if (!navbar.contains(e.target)) {
+                suggestionsDiv.style.display = 'none';
+                filtersDiv.style.display = 'none';
+            }
+        });
+
+        // Handle search submit
+        function handleSubmit({query = '', filter = ''}) {
+            if (query) {
+                addToSearchHistory(query);
+            }
+            // console.log('Searching with:', {query, filter});
+            window.FilterOptions.query = query;
+            document.dispatchEvent(new CustomEvent('x-filter'));
+        }
+
+    })();
+</script>
+
+<!-- Register Filter Sliders -->
+<script>
+    (function () {
+            const id = 'creation-date-slider';
+            const slider = new DualSlider(id, {
+                minValue: 1958,
+                maxValue: 2015,
+                initialLeft: 1958,
+                initialRight: 2015
+            });
+            document.addEventListener('sliderChange', (e) => {
+                const {sliderId, leftValue, rightValue} = e.detail;
+                if (sliderId === id) {
+                    // console.log(`Slider '${id}': ${leftValue} - ${rightValue}`);
+                    window.FilterOptions.creationDateFrom = leftValue;
+                    window.FilterOptions.creationDateTo = rightValue;
+                    document.dispatchEvent(new CustomEvent('x-filter'));
+                }
+            });
+            console.log("Initialized slider:", slider.containerId)
+        }
+    )();
+
+    (function () {
+            const id = 'first-album-date-slider';
+            const slider = new DualSlider(id, {
+                minValue: 1963,
+                maxValue: 2018,
+                initialLeft: 1963,
+                initialRight: 2018
+            });
+            document.addEventListener('sliderChange', (e) => {
+                const {sliderId, leftValue, rightValue} = e.detail;
+                if (sliderId === id) {
+                    window.FilterOptions.firstAlbumDateFrom = leftValue;
+                    window.FilterOptions.firstAlbumDateTo = rightValue;
+                    document.dispatchEvent(new CustomEvent('x-filter'));
+                }
+            });
+            console.log("Initialized slider:", slider.containerId)
+        }
+    )();
+</script>
+
+</body>
+</html>

@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -55,6 +56,7 @@ type APIRequestData struct {
 	LocationsOfConcertsFilterQuery `json:"locations_of_concerts"`
 	NumberOfMembersFilterQuery     `json:"number_of_members"`
 	Combinator                     string `json:"combinator"`
+	Query                          string `json:"query"`
 }
 
 type APIResponseData struct {
@@ -98,6 +100,10 @@ func API(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		makeAPIErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
+	}
+
+	if requestData.Query != "" {
+		AllArtists = filterArtists(AllArtists, requestData.Query)
 	}
 
 	filteredArtistsIds := make(map[int]bool)
@@ -400,6 +406,51 @@ func filterByFirstAlbumDate(artists []api.Artist, q FirstAlbumDateFilterQuery) (
 	}
 
 	return
+}
+
+// filterArtists filters the list of artists based on the search query
+func filterArtists(artists []api.Artist, query string) []api.Artist {
+	if query == "" {
+		return artists
+	}
+
+	query = strings.ToLower(query)
+	var result []api.Artist
+
+	for _, a := range artists {
+		// Artist/band name matches
+		if strings.Contains(strings.ToLower(a.Name), query) {
+			result = append(result, a)
+			continue
+		}
+
+		// Members
+		for _, member := range a.Members {
+			if strings.Contains(strings.ToLower(member), query) {
+				result = append(result, a)
+				break
+			}
+		}
+
+		// First album dates
+		if strings.Contains(strings.ToLower(a.FirstAlbum), query) {
+			result = append(result, a)
+			continue
+		}
+
+		// creation dates
+		if strings.Contains(strconv.Itoa(a.CreationDate), query) {
+			result = append(result, a)
+			continue
+		}
+
+		// locations
+		if strings.Contains(strings.ToLower(a.Locations), strings.ToLower(query)) {
+			result = append(result, a)
+			continue
+		}
+	}
+	return result
 }
 
 func IsBlank(s string) bool {

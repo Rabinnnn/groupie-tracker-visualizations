@@ -1,0 +1,115 @@
+:root {
+    --primary-bg: #ffffff;
+    --card-bg: #f8f9fa;
+    --text-color: #212529;
+    --error-color: #dc3545;
+}
+
+/* Transition Component to Artists List */
+#artists {
+    padding: 40px 20px;
+    background: #fff;
+}
+#artists h2 {
+    margin-bottom: 10px;
+}
+
+.artContainer {
+    width: 100%;
+    background: var(--primary-bg);
+}
+
+.artProgressBar {
+    width: 100%;
+    height: 4px;
+    background: #e9ecef;
+    overflow: hidden;
+    display: none;
+}
+
+.artProgressBar::after {
+    content: '';
+    display: block;
+    width: 40%;
+    height: 100%;
+    background: #0d6efd;
+    animation: progress 1s infinite linear;
+}
+
+@keyframes progress {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(250%); }
+}
+
+.artGrid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+/* Responsive grid adjustments */
+@media (min-width: 576px) {
+    .artGrid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+@media (min-width: 992px) {
+    .artGrid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+.artCard {
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s;
+    cursor: pointer;
+    /* Removes the underline */
+    text-decoration: none;
+    color: inherit;
+}
+
+.artCard:hover {
+    transform: translateY(-4px);
+}
+
+.artCard img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.artCardContent {
+    padding: 12px;
+}
+
+.artCardTitle {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.artError {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--error-color);
+}
+
+.artRetryButton {
+    margin-top: 16px;
+    padding: 8px 16px;
+    background: var(--error-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.artRetryButton:hover {
+    opacity: 0.9;
+}

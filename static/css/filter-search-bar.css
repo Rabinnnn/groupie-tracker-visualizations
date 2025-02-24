@@ -1,0 +1,153 @@
+.fl-search-bar {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 25px;
+    cursor: text;
+    background-color: #f5f5f5;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+}
+
+.fl-search-bar:focus {
+    background-color: #eeeeee;
+}
+
+.fl-search-icon {
+    color: #666;
+    margin-right: 10px;
+}
+
+.fl-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    padding: 5px;
+    background-color: #f5f5f5;
+}
+
+.fl-clear-icon {
+    color: #666;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: none;
+}
+
+.fl-filter-layout {
+    color: #666;
+    padding: 5px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: -10px -15px -10px 0;
+    border-radius: 0 25px 25px 0;
+    transition: background-color 0.2s;
+}
+
+.fl-filter-layout:hover {
+    background-color: #f5f5f5;
+}
+
+.fl-filter-layout:active {
+    background-color: #ebebeb;
+}
+
+.fl-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 10px;
+    margin-top: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1000;
+    display: none;
+    max-height: 30vh;
+    overflow-y: auto;
+}
+
+.fl-suggestion-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fl-suggestion-item:hover {
+    background: #f0f0f0;
+}
+
+.fl-suggestion-item.active {
+    background: #f0f0f0;
+}
+
+.fl-suggestion-content {
+    flex: 1;
+}
+
+.fl-suggestion-icon {
+    color: #666;
+    width: 16px;
+}
+
+.fl-remove-history {
+    color: #666;
+    padding: 5px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.fl-remove-history:hover {
+    opacity: 1;
+}
+
+.fl-filters {
+    background: white;
+    border-radius: 10px;
+    margin-top: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: none;
+    overflow-y: auto;
+    max-height: 30vh;
+}
+
+.fl-filter-option {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.fl-filter-option:hover {
+    background: #f0f0f0;
+}
+
+.fl-search-wrapper {
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .fl-search-bar {
+        padding: 8px 12px;
+    }
+
+    .fl-search-input {
+        font-size: 14px;
+    }
+
+    .fl-filter-layout span {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .fl-search-bar {
+        padding: 6px 10px;
+    }
+}
