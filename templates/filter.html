@@ -14,6 +14,7 @@
     <link href="/static/css/filter-components.css" rel="stylesheet">
     <link href="/static/css/filter-art.css" rel="stylesheet">
     <link href="/static/css/dual-slider.css" rel="stylesheet">
+    <link href="/static/css/checkbox.css" rel="stylesheet">
     <script src="/static/js/dual-slider.js"></script>
     <script crossorigin="anonymous" src="https://kit.fontawesome.com/85624eb666.js"></script>
 </head>
@@ -25,12 +26,6 @@
     <div id="navbar-content">
         <img alt="Favicon" class="favicon" src="/static/images/favicon.svg">
         <div class="site-name">Artists Tracker</div>
-        <!--    <div class="search-container">-->
-        <!--        <label for="search-input">-->
-        <!--            <input type="text" id="search-input" placeholder="Search...">-->
-        <!--        </label>-->
-        <!--        <div class="shortcut">Ctrl + K</div>-->
-        <!--    </div>-->
 
         <!-- Neo Search bar -->
         <div class="fl-search-container">
@@ -41,7 +36,9 @@
                            id="fl-search-input"
                            placeholder="Discover artists | bands [Ctrl + K]"
                            type="text">
-                    <i class="fas fa-times fl-clear-icon"></i>
+                    <span class="fl-clear-icon">
+                        <i class="fas fa-times"></i>
+                    </span>
                     <div class="fl-filter-layout">
                         <i class="fas fa-filter"></i>
                         <span>filter</span>
@@ -59,9 +56,6 @@
                 <i class="fas fa-times fl-remove-history"></i>
             </div>
         </template>
-<!--        <template id="fl-filter-template">-->
-<!--            <div class="fl-filter-option"></div>-->
-<!--        </template>-->
     </div>
     <div class="fl-filters">
         <div class="nfl-filters">
@@ -77,73 +71,63 @@
             <div id="nfl-filter-members">
                 <div class="nfl-filters-label">No. of Members</div>
                 <div class="nfl-checkbox-list">
-                    <label class="checkbox-container">
+                    <label class="checkbox-container">1
                         <input checked="checked" id="check-mem-1" type="checkbox">
                         <span class="checkmark"></span>
-                        <span>&nbsp;1&nbsp;&nbsp;</span>
                     </label>
 
-                    <label class="checkbox-container">
+                    <label class="checkbox-container">2
                         <input checked="checked" id="check-mem-2" type="checkbox">
                         <span class="checkmark"></span>
-                        <span>&nbsp;2&nbsp;&nbsp;</span>
                     </label>
 
-                    <label class="checkbox-container">
+                    <label class="checkbox-container">3
                         <input checked="checked" id="check-mem-3" type="checkbox">
                         <span class="checkmark"></span>
-                        <span>&nbsp;3&nbsp;&nbsp;</span>
                     </label>
 
-                    <label class="checkbox-container">
+                    <label class="checkbox-container">4
                         <input checked="checked" id="check-mem-4" type="checkbox">
                         <span class="checkmark"></span>
-                        <span>&nbsp;4&nbsp;&nbsp;</span>
                     </label>
 
-                    <label class="checkbox-container">
+                    <label class="checkbox-container">5
                         <input checked="checked" id="check-mem-5" type="checkbox">
                         <span class="checkmark"></span>
-                        <span>&nbsp;5&nbsp;&nbsp;</span>
                     </label>
 
-                    <label class="checkbox-container">
+                    <label class="checkbox-container">6
                         <input checked="checked" id="check-mem-6" type="checkbox">
                         <span class="checkmark"></span>
-                        <span>&nbsp;6&nbsp;&nbsp;</span>
                     </label>
 
-                    <label class="checkbox-container">
+                    <label class="checkbox-container">7
                         <input checked="checked" id="check-mem-7" type="checkbox">
                         <span class="checkmark"></span>
-                        <span>&nbsp;7&nbsp;&nbsp;</span>
                     </label>
 
-                    <label class="checkbox-container">
+                    <label class="checkbox-container">8
                         <input checked="checked" id="check-mem-8" type="checkbox">
                         <span class="checkmark"></span>
-                        <span>&nbsp;8&nbsp;&nbsp;</span>
                     </label>
                 </div>
             </div>
             <div id="nfl-filter-concert-locations">
                 <div class="nfl-filters-label">Concert locations</div>
                 <label>
-                    <input type="text"
+                    <input class="nfl-filters-input"
                            id="nfl-filters-concert-locations"
-                           class="nfl-filters-input"
-                           placeholder="Nairobi, Kenya; Washington, USA" >
+                           placeholder="Nairobi, Kenya; Washington, USA"
+                           type="text">
                 </label>
             </div>
         </div>
     </div>
 </nav>
 
-
 <section id="hero">
     <div class="hero-text">
         <h1 style="font-family: Shefian, Arial, serif">Discover Your Favorite Artists</h1>
-        <!--        <p>Realtime Data</p>-->
         <p style="font-size: smaller">Score your concert tickets before anyone else!</p>
         <br>
         <button class="cta-button" id="cta-button">Explore Now</button>
@@ -181,11 +165,61 @@
     </template>
 </section>
 
-<!-- data injected from go backend -->
+<!-- All artists data injected from go templates backend -->
 <script id="data" type="application/json">
-    "{.ArtistsJson}"
+    "{{.ArtistsJson}}"
 </script>
 
+<script>
+    window.FilterOptions = {
+        query: "",
+        creationDateFrom: "1958",
+        creationDateTo: "2015",
+        firstAlbumDateFrom: "1963",
+        firstAlbumDateTo: "2018",
+        // All checkboxes are checked at start
+        numberOfMembers: Array(8).fill(1),
+        concertLocation: "",
+    };
+
+    // Add event listeners for all the 8 checkboxes
+    (function () {
+        function handleCheckboxChange(event) {
+            // Extract index from checkbox id
+            const checkboxIndex = parseInt(event.target.id.split('-')[2]) - 1;
+            window.FilterOptions.numberOfMembers[checkboxIndex] = event.target.checked ? 1 : 0;
+            document.dispatchEvent(new CustomEvent('x-filter'));
+        }
+
+        // Set up listeners for all checkboxes
+        for (let i = 1; i <= 8; i++) {
+            const checkbox = document.getElementById(`check-mem-${i}`);
+            checkbox.addEventListener('change', handleCheckboxChange);
+        }
+    })();
+
+    // Function to return the indices of checkboxes that are checked (value is 1)
+    window.GlobalGetNumberOfMembers = function () {
+        const arr = window.FilterOptions.numberOfMembers;
+        return arr.map((value, index) => value === 1 ? index + 1 : -1) // Map to get the indices of checked boxes
+            .filter(index => index !== -1); // Filter out -1 values
+    };
+
+    // Add event listener for changes in the concert location
+    (function () {
+        const inputElement = document.getElementById('nfl-filters-concert-locations');
+        inputElement.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                // Prevent the default form submission behavior (if any)
+                event.preventDefault();
+                window.FilterOptions.concertLocation = inputElement.value;
+                document.dispatchEvent(new CustomEvent('x-filter'));
+            }
+        });
+    })();
+</script>
+
+<!-- Navbar setup -->
 <script>
     // Scroll to artists list when the CTA button is clicked
     (function () {
@@ -259,10 +293,7 @@
             this.progressBar = document.querySelector('.artProgressBar');
             this.cardTemplate = document.querySelector('#artCardTemplate');
             this.errorTemplate = document.querySelector('#artErrorTemplate');
-
-            this.lastQuery = "";
-            this.debouncedFilter = debounce(query => this.filter(query), 300);
-            // debouncedFilter(e.target.value);
+            this.lastCallback = undefined;
         }
 
         showProgressBar() {
@@ -277,7 +308,9 @@
             this.grid.innerHTML = '';
             const error = this.errorTemplate.content.cloneNode(true);
             error.querySelector('.artRetryButton').addEventListener('click', () => {
-                this.debouncedFilter(this.lastQuery);
+                if (this.lastCallback) {
+                    this.filterCallback(this.lastCallback)
+                }
             });
             this.grid.appendChild(error);
         }
@@ -299,19 +332,14 @@
             });
         }
 
-        async filter(query) {
-            this.container.scrollIntoView({behavior: 'smooth'});
+        async filterCallback(asyncGetArtistsCallback) {
+            this.lastCallback = asyncGetArtistsCallback;
+            // this.container.scrollIntoView({behavior: 'smooth'});
             this.showProgressBar();
 
             try {
-                // Simulated API call
-                const response = await fetch(`https://groupietrackers.herokuapp.com/api/artists`);
-                // const response = await fetch(`/api/artists?q=${encodeURIComponent(query)}`);
-                if (!response.ok) throw new Error('Failed to fetch artists');
-
-                const artists = await response.json();
+                const artists = await asyncGetArtistsCallback();
                 this.displayArtists(artists);
-                this.lastQuery = String(query);
             } catch (error) {
                 this.showError();
             } finally {
@@ -323,7 +351,7 @@
     // Initialize the container
     window.GlobalArtistContainer = new ArtistContainer();
 
-    // Load all artists
+    // Load all artists embedded by server
     (function () {
         // Get raw json from the data element
         const rawJson = document.getElementById('data').textContent;
@@ -339,10 +367,66 @@
                 rawJson.slice(lastQuoteIndex + 1);
         }
 
-        // Get the artists json
-        window.AllArtists = JSON.parse(json);
-        // Display the artists in the artists element section
-        window.GlobalArtistContainer.displayArtists(window.AllArtists);
+        try {
+            // Get the artists json
+            window.AllArtists = JSON.parse(json);
+            // Display the artists in the artists element section
+            window.GlobalArtistContainer.displayArtists(window.AllArtists);
+        } catch (e) {
+            console.error("Failed to load json data embedded in html by server")
+        }
+    })();
+
+    (function () {
+        const debouncedFilterCallback = debounce(callback =>
+            window.GlobalArtistContainer.filterCallback(callback), 300);
+
+        document.addEventListener('x-filter', async () => {
+            const query = `${window.FilterOptions.query}`;
+            await debouncedFilterCallback(async function () {
+                try {
+                    const response = await fetch(`/api/filter`, {
+                        method: "POST",
+                        body: JSON.stringify({
+                                "creation_date": {
+                                    "from": Number.parseInt(window.FilterOptions.creationDateFrom),
+                                    "to": Number.parseInt(window.FilterOptions.creationDateTo),
+                                    "in": [],
+                                    "type": "range"
+                                },
+                                "first_album_date": {
+                                    "from": `01-01-${window.FilterOptions.firstAlbumDateFrom}`,
+                                    "to": `31-12-${window.FilterOptions.firstAlbumDateTo}`,
+                                    "in": [],
+                                    "type": "range"
+                                },
+                                "number_of_members": {
+                                    "from": 0,
+                                    "to": 0,
+                                    "in": window.GlobalGetNumberOfMembers(),
+                                    "type": "in"
+                                },
+                                "locations_of_concerts": {
+                                    "in": window.FilterOptions.concertLocation
+                                        .split(';')
+                                        .filter(part => part.trim() !== ''),
+                                },
+                                "combinator": "and",
+                                "query": query
+                            }
+                        )
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to filter artists');
+                    }
+                    const responseData = await response.json();
+                    return responseData['artists'];
+                } catch (e) {
+                    console.error("Failed to filter:", e);
+                    throw e;
+                }
+            });
+        });
     })();
 
 </script>
@@ -356,6 +440,9 @@
     // 3. Elements that contains the search query: score +2
     // 4. Elements that end with the search query: score +1
     function SearchScore(allSuggestions, query, minScore = 2) {
+        if (!allSuggestions) {
+            return []
+        }
         const searchScores = [];
         allSuggestions.forEach((suggestionObject) => {
             const suggestion = String(suggestionObject.suggestion).toLowerCase();
@@ -389,7 +476,6 @@
         });
 
         searchScores.sort((a, b) => b.score - a.score);
-        // return searchScores.map((suggestionScore) => suggestionScore.suggestion);
         return searchScores
     }
 
@@ -398,7 +484,6 @@
         const MAX_HISTORY_ITEMS = 50;
 
         // Elements
-        const searchWrapper = document.querySelector('.fl-search-wrapper');
         const searchBar = document.querySelector('.fl-search-bar');
         const searchInput = document.querySelector('.fl-search-input');
         const clearIcon = document.querySelector('.fl-clear-icon');
@@ -408,27 +493,6 @@
 
         // Templates
         const suggestionTemplate = document.querySelector('#fl-suggestion-template');
-        // const filterTemplate = document.querySelector('#fl-filter-template');
-
-        // // Filter options
-        // const filterOptions = [
-        //     'filter the artists/bands which the creation date is between "1995" and "2000"',
-        //     'filter the artists/bands that recorded their first album between "1990" and "1992"',
-        //     'filter the artists/bands that have exactly "6" members in their band',
-        //     'filter the artists/bands that have/had concerts in "Texas, USA"',
-        //     'filter the artists/bands which the creation date is between "1970" and "2000" and have only "1" member (solo artists)',
-        //     'filter the artists/bands which the creation date is after "2010" and recorded their first album after "2010"',
-        //     'filter the artists/bands that have/had concerts in "Washington, USA" and have more than 3 members',
-        //     'filter the artists/bands that recorded their first album between "1980" and "1990" and have a maximum of "4" members'
-        // ];
-        //
-        // // Populate filters using template
-        // filterOptions.forEach(filter => {
-        //     const filterElement = filterTemplate.content.cloneNode(true).querySelector('.fl-filter-option');
-        //     filterElement.textContent = filter;
-        //     filterElement.onclick = () => handleSubmit({filter});
-        //     filtersDiv.appendChild(filterElement);
-        // });
 
         // Local Storage Functions
         function getSearchHistory() {
@@ -577,11 +641,6 @@
 
         // Close suggestions and filters when clicking outside
         document.addEventListener('click', (e) => {
-            // if (!searchWrapper.contains(e.target)) {
-            //     suggestionsDiv.style.display = 'none';
-            //     filtersDiv.style.display = 'none';
-            // }
-
             const navbar = document.getElementById('navbar');
             if (!navbar.contains(e.target)) {
                 suggestionsDiv.style.display = 'none';
@@ -594,11 +653,11 @@
             if (query) {
                 addToSearchHistory(query);
             }
-            console.log('Searching with:', {query, filter});
-            // Implementation would go here
+            // console.log('Searching with:', {query, filter});
+            window.FilterOptions.query = query;
+            document.dispatchEvent(new CustomEvent('x-filter'));
         }
 
-        window.GlobalHandleSubmit = handleSubmit;
     })();
 </script>
 
@@ -614,11 +673,14 @@
             });
             document.addEventListener('sliderChange', (e) => {
                 const {sliderId, leftValue, rightValue} = e.detail;
-                // Now you can handle each slider separately based on sliderId
                 if (sliderId === id) {
-                    console.log(`Slider '${id}': ${leftValue} - ${rightValue}`);
+                    // console.log(`Slider '${id}': ${leftValue} - ${rightValue}`);
+                    window.FilterOptions.creationDateFrom = leftValue;
+                    window.FilterOptions.creationDateTo = rightValue;
+                    document.dispatchEvent(new CustomEvent('x-filter'));
                 }
             });
+            console.log("Initialized slider:", slider.containerId)
         }
     )();
 
@@ -632,11 +694,13 @@
             });
             document.addEventListener('sliderChange', (e) => {
                 const {sliderId, leftValue, rightValue} = e.detail;
-                // Now you can handle each slider separately based on sliderId
                 if (sliderId === id) {
-                    console.log(`Slider '${id}': ${leftValue} - ${rightValue}`);
+                    window.FilterOptions.firstAlbumDateFrom = leftValue;
+                    window.FilterOptions.firstAlbumDateTo = rightValue;
+                    document.dispatchEvent(new CustomEvent('x-filter'));
                 }
             });
+            console.log("Initialized slider:", slider.containerId)
         }
     )();
 </script>

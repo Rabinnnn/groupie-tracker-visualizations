@@ -1,12 +1,11 @@
 .dual-slider-container {
-    margin: 20px;
 }
 
 .slider-container {
+    margin: 0 0.5em 0 0.5em;
     position: relative;
     width: 300px;
-    height: 50px;
-    margin: 20px auto;
+    height: 24px;
 }
 
 .slider-track {
@@ -24,7 +23,7 @@
     top: 50%;
     transform: translateY(-50%);
     height: 4px;
-    background-color: #3b82f6;
+    background-color: #5B699C;
     border-radius: 2px;
 }
 
@@ -34,7 +33,7 @@
     width: 20px;
     height: 20px;
     background: white;
-    border: 2px solid #3b82f6;
+    border: 2px solid #5B699C;
     border-radius: 50%;
     transform: translateY(-50%);
     cursor: pointer;
@@ -42,17 +41,14 @@
 }
 
 .value-display {
-    font-family: Arial, sans-serif;
-    margin: 10px;
-    padding: 5px 10px;
-    background-color: #f3f4f6;
-    border-radius: 4px;
+    font-family: Poppins, Arial, sans-serif;
+    font-weight: 470;
+    color: grey;
     display: inline-block;
 }
 
 .display-container {
     display: flex;
     justify-content: space-between;
-    width: 300px;
-    margin: 0 auto;
+    width: 314px;
 }

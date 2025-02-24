@@ -18,15 +18,16 @@ class DualSlider {
     init() {
         // Create HTML structure
         this.container.innerHTML = `
-                    <div class="display-container">
-                        <div class="value-display left-value">0</div>
-                        <div class="value-display right-value">100</div>
-                    </div>
                     <div class="slider-container">
                         <div class="slider-track"></div>
                         <div class="slider-range"></div>
                         <div class="slider left-slider"></div>
                         <div class="slider right-slider"></div>
+                    </div>
+                    
+                    <div class="display-container">
+                        <div class="value-display left-value">0</div>
+                        <div class="value-display right-value">100</div>
                     </div>
                 `;
 
