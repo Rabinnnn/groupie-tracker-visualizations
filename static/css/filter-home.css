@@ -1,0 +1,111 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Poppins, Arial, sans-serif;
+    line-height: 1.6;
+}
+
+/* Navigation Bar */
+#navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+}
+#navbar-content {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    width: 100%;
+    padding: 10px 20px;
+}
+
+/* Raised style when not at top */
+#navbar.raised {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+/* Hide navbar when scrolling down */
+#navbar.hide {
+    transform: translateY(-100%);
+}
+#navbar img.favicon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+#navbar .site-name {
+    font-family: 'CyberAlert', Arial, sans-serif;
+    font-size: 24px;
+    margin-right: 20px;
+    margin-top: 8px;
+}
+#navbar .fl-search-container {
+    position: relative;
+    flex: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+/* Shortcut hint styling */
+#navbar .shortcut {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #f0f0f0;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    color: #666;
+}
+/* For small devices: hide the site name */
+@media (max-width: 730px) {
+    #navbar .site-name {
+        display: none;
+    }
+}
+
+/* Hero Section */
+#hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 100px 20px 20px; /* Top padding to account for fixed navbar */
+    min-height: 80vh;
+    background: #f9f9f9;
+}
+#hero .hero-text {
+    flex: 1;
+    min-width: 300px;
+}
+#hero .hero-text h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+#hero .hero-text .cta-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background: #5B699C;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#hero .hero-image {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#hero .hero-image img {
+    width: 398px;
+    height: 627px;
+    max-width: 100%;
+    height: auto;
+}

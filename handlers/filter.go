@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+	"groupie-tracker/cache"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -14,10 +16,18 @@ func Filter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := struct{}{}
+	// Template data
+	data := struct{ ArtistsJson string }{}
 
-	ID := r.URL.Query().Get("id")
-	log.Printf(ID)
+	artists, _, _, _, err := cache.GetCachedData()
+	if err != nil {
+		log.Println(err)
+		RenderErrorPage(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	jsonBytes, _ := json.Marshal(artists)
+	data.ArtistsJson = string(jsonBytes)
 
 	temp, err := template.New(handlerTemplate).ParseFiles(filepath.Join(templatesDir, handlerTemplate))
 	if err != nil {

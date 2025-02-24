@@ -251,7 +251,7 @@ header {
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    z-index: 1002;
+    z-index: 1000;
 }
 
 .tpl-001-li:hover {

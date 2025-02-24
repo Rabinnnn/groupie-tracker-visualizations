@@ -3,458 +3,521 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Filter Artists | Groupie</title>
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/85624eb666.js"></script>
+    <title>Artists Tracker | Groupie</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+          rel="stylesheet">
     <link href="/static/css/fonts.css" rel="stylesheet">
-    <link href="/static/css/filter.css" rel="stylesheet">
+    <link href="/static/css/filter-home.css" rel="stylesheet">
+    <link href="/static/css/filter-search-bar.css" rel="stylesheet">
+    <link href="/static/css/filter-art.css" rel="stylesheet">
+    <script crossorigin="anonymous" src="https://kit.fontawesome.com/85624eb666.js"></script>
 </head>
 <body>
 
-<header>
-    <img alt="favicon" height="24" src="/static/images/favicon.svg" width="24">
-    <span class="logo-text">Artist Tracker</span>
-</header>
+<label for="fl-search-input"></label>
 
-<div id="catchy">
-    <div class="text">
+<nav id="navbar">
+    <div id="navbar-content">
+        <img alt="Favicon" class="favicon" src="/static/images/favicon.svg">
+        <div class="site-name">Artists Tracker</div>
+        <!--    <div class="search-container">-->
+        <!--        <label for="search-input">-->
+        <!--            <input type="text" id="search-input" placeholder="Search...">-->
+        <!--        </label>-->
+        <!--        <div class="shortcut">Ctrl + K</div>-->
+        <!--    </div>-->
+
+        <!-- Neo Search bar -->
+        <div class="fl-search-container">
+            <div class="fl-search-wrapper">
+                <div class="fl-search-bar">
+                    <i class="fas fa-search fl-search-icon"></i>
+                    <input id="fl-search-input"
+                           class="fl-search-input"
+                           placeholder="Discover artists | bands [Ctrl + K]"
+                           type="text">
+                    <i class="fas fa-times fl-clear-icon"></i>
+                    <div class="fl-filter-layout">
+                        <i class="fas fa-filter"></i>
+                        <span>filter</span>
+                    </div>
+                </div>
+                <div class="fl-suggestions"></div>
+            </div>
+        </div>
+
+        <!-- Neo Search bar Templates -->
+        <template id="fl-suggestion-template">
+            <div class="fl-suggestion-item">
+                <i class="fl-suggestion-icon"></i>
+                <span class="fl-suggestion-content"></span>
+                <i class="fas fa-times fl-remove-history"></i>
+            </div>
+        </template>
+        <template id="fl-filter-template">
+            <div class="fl-filter-option"></div>
+        </template>
+    </div>
+    <div class="fl-filters"></div>
+</nav>
+
+
+<section id="hero">
+    <div class="hero-text">
         <h1 style="font-family: Shefian, Arial, serif">Discover Your Favorite Artists</h1>
         <!--        <p>Realtime Data</p>-->
         <p style="font-size: smaller">Score your concert tickets before anyone else!</p>
         <br>
-        <button>Explore Now</button>
+        <button class="cta-button" id="cta-button">Explore Now</button>
     </div>
-    <img alt="Groupie Art" src="/static/images/groupie-art.png">
-</div>
+    <div class="hero-image">
+        <img alt="Hero Image" src="/static/images/groupie-art.png">
+    </div>
+</section>
 
-<div id="search-container">
-    <!--    <div id="search-bar">-->
-    <!--        <span class="icon">🔍</span>-->
-    <!--        <label for="search-input"></label>-->
-    <!--        <input type="text" id="search-input" placeholder="Search artists...">-->
-    <!--        <span class="icon" id="filter-toggle">⚙️</span>-->
-    <!--    </div>-->
-    <div class="search-bar" onclick="setFocusToElement('search-input');">
-        <i class="fas fa-search icon"></i>
-        <input aria-label="Search" id="search-input" placeholder="Search..." type="text">
-        <i class="fas fa-filter icon"></i>
+<section id="artists">
+    <h2>Artists | Albums</h2>
+    <p style="margin-bottom: 1em;">Discover the latest artists and albums here</p>
+
+    <div class="artContainer">
+        <div class="artProgressBar"></div>
+        <div class="artGrid"></div>
     </div>
 
-    <div class="search-suggestions" id="search-suggestions">
-        <ul id="search-suggestions-list"></ul>
-    </div>
-
-    <!-- Search filters -->
-    <div id="filters">
-        <div class="filter-group">
-            <label>Creation Date Range:</label>
-            <div class="range-slider">
-                <label for="creation-date-min"></label>
-                <input id="creation-date-min" placeholder="Min (e.g., 1995)" type="number">
-                <label for="creation-date-max"></label>
-                <input id="creation-date-max" placeholder="Max (e.g., 2000)" type="number">
-            </div>
+    <template id="artCardTemplate">
+        <div>
+            <a class="artCard" href="#">
+                <img alt="Album cover" src="/static/images/favicon.svg">
+                <div class="artCardContent">
+                    <h3 class="artCardTitle"></h3>
+                </div>
+            </a>
         </div>
-        <div class="filter-group">
-            <label>First Album Year Range:</label>
-            <div class="range-slider">
-                <label for="album-year-min"></label>
-                <input id="album-year-min" placeholder="Min (e.g., 1990)" type="number">
-                <label for="album-year-max"></label>
-                <input id="album-year-max" placeholder="Max (e.g., 1992)" type="number">
-            </div>
+    </template>
+
+    <template id="artErrorTemplate">
+        <div class="artError">
+            <p>Failed to load artists</p>
+            <button class="artRetryButton">Try Again</button>
         </div>
-        <div class="filter-group">
-            <label for="members-count">Number of Members:</label>
-            <input id="members-count" placeholder="Exact number (e.g., 6)" type="number">
-        </div>
-        <div class="filter-group">
-            <label for="concert-location">Concert Location:</label>
-            <input id="concert-location" placeholder="e.g., Texas, USA" type="text">
-        </div>
-    </div>
-</div>
+    </template>
+</section>
 
-<div id="progress">
-    <div class="loader"></div>
-</div>
-
-<!-- Template to create a suggestion element -->
-<template id="tpl-001">
-    <ul class="tpl-root">
-        <li class="tpl-001-li">
-            <span>
-                <i class="fas fa-clock-rotate-left"></i>
-                <span>Suggestion</span>
-            </span>
-            <i class="fas fa-xmark"></i>
-        </li>
-    </ul>
-</template>
-
-
-<div id="results"></div>
-
-<!-- Dummy data -->
-<div class="item-list">
-    <ul id="item-list">
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-        <li>Item 4</li>
-        <li>Item 5</li>
-
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-        <li>Item 4</li>
-        <li>Item 5</li>
-
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-        <li>Item 4</li>
-        <li>Item 5</li>
-
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-        <li>Item 4</li>
-        <li>Item 5</li>
-
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-        <li>Item 4</li>
-        <li>Item 5</li>
-
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-        <li>Item 4</li>
-        <li>Item 5</li>
-
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-        <li>Item 4</li>
-        <li>Item 5</li>
-
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-        <li>Item 4</li>
-        <li>Item 5</li>
-    </ul>
-</div>
-
-<!-- Utility functions -->
-<script>
-    function setFocusToElement(elementId) {
-        // Get the element by its ID
-        let element = document.getElementById(elementId);
-
-        // If the element does not exist, exit
-        if (!element) {
-            console.log("Element with id:", elementId, " does not exist")
-            return;
-        }
-
-        // Ensure the element is focusable by setting tabindex if necessary
-        if (element.tabIndex === -1 && !['input', 'textarea', 'select', 'button'].includes(element.tagName.toLowerCase())) {
-            // Set tabindex to 0 for non-input elements to make them focusable without disrupting tab order
-            element.tabIndex = 0;
-        }
-
-        // Set focus on the element
-        try {
-            element.focus();
-            console.log(`Focus set on ${elementId}`);
-        } catch (e) {
-            console.error(`Failed to set focus: ${e.message}`);
-        }
-    }
+<!-- data injected from go backend -->
+<script id="data" type="application/json">
+    "{{.ArtistsJson}}"
 </script>
 
-
-<!-- Search bar suggestions -->
 <script>
-    // Creates a new DOM element from the template `tpl-001`
-    function createSuggestionElement(iconClass, text, removeCloseIcon, onClickListener) {
-        // Get the template content
-        const template = document.getElementById('tpl-001');
-        const clone = document.importNode(template.content, true);
+    // Scroll to artists list when the CTA button is clicked
+    (function () {
+        const cta = document.getElementById('cta-button');
+        cta.onclick = () => {
+            document.getElementById('artists').scrollIntoView({behavior: "smooth"});
+        }
+    })();
 
-        // Find elements within the cloned template
-        const iconElement = clone.querySelector('.fa-clock-rotate-left');
-        const textElement = clone.querySelector('span span');
-        const closeIconElement = clone.querySelector('.fa-xmark');
+    (function () {
+        const navbar = document.getElementById('navbar');
+        const hero = document.getElementById('hero');
+        let lastScrollTop = 0;
 
-        // Replace the icon class
-        if (iconClass) {
-            iconElement.classList.replace('fa-clock-rotate-left', iconClass);
+        // Check if hero section is visible in viewport
+        function isHeroVisible() {
+            const rect = hero.getBoundingClientRect();
+            return rect.bottom > 0;
         }
 
-        // Replace the text
-        if (text) {
-            textElement.textContent = text;
-        }
+        window.addEventListener('scroll', function () {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
-        // Conditionally remove the close icon classes
-        if (removeCloseIcon && closeIconElement) {
-            closeIconElement.classList.remove('fas', 'fa-xmark');
-        }
+            // Add or remove raised shadow based on scroll position
+            if (scrollTop > 0) {
+                navbar.classList.add('raised');
+            } else {
+                navbar.classList.remove('raised');
+            }
 
-        // Add the optional onclick listener to the close icon
-        if (onClickListener && closeIconElement) {
-            closeIconElement.addEventListener('click', onClickListener);
-        }
+            // Only toggle hide/show if hero section is out of view
+            if (!isHeroVisible()) {
+                if (scrollTop > lastScrollTop) {
+                    // Scrolling down: hide navbar
+                    navbar.classList.add('hide');
+                } else {
+                    // Scrolling up: show navbar
+                    navbar.classList.remove('hide');
+                }
+            } else {
+                // Always show navbar when hero is visible
+                navbar.classList.remove('hide');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        }, false);
 
-        return clone;
+        // Focus the search input when Ctrl + K is pressed
+        window.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                document.getElementById('fl-search-input').focus();
+            }
+        });
+    })();
+</script>
+
+<!-- Artists Display -->
+<script>
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
     }
 
-    async function _searchBarSuggestions() {
-        const searchInput = document.getElementById('search-input');
-        const suggestionsContainer = document.getElementById('search-suggestions');
-        const suggestionsList = document.getElementById('search-suggestions-list');
+    class ArtistContainer {
+        constructor() {
+            this.container = document.querySelector('.artContainer');
+            this.grid = document.querySelector('.artGrid');
+            this.progressBar = document.querySelector('.artProgressBar');
+            this.cardTemplate = document.querySelector('#artCardTemplate');
+            this.errorTemplate = document.querySelector('#artErrorTemplate');
 
-        let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-        // Track the currently highlighted suggestion
-        let currentHighlightedIndex = -1;
-
-        // fetch search suggestions
-        async function fetchSuggestions(query) {
-            if (!query) {
-                displaySearchHistory();
-                return;
-            }
-
-            addToSearchHistory(query);
-            try {
-                let suggestions = [
-                    "hello",
-                    "hi",
-                    "go",
-                    "come"
-                ]
-                displaySuggestions(suggestions, false);
-
-                const response = await fetch(`/search-suggestions?q=${query}`);
-                // const data = await response.json();
-
-            } catch (error) {
-                console.error('Error fetching suggestions:', error);
-            }
+            this.lastQuery = "";
+            this.debouncedFilter = debounce(query => this.filter(query), 300);
+            // debouncedFilter(e.target.value);
         }
 
-        // display search suggestions.
-        // fromHistory: whether the search suggestions have been pulled from search history
-        function displaySuggestions(suggestions, fromHistory) {
-            suggestionsList.innerHTML = '';
-            suggestions.forEach((suggestion, index) => {
-                let suggestionElement = fromHistory
-                    ? createSuggestionElement(undefined, suggestion, false, (e) => {
-                        e.stopPropagation();
-                        removeFromSearchHistory(index);
-                    })
-                    : createSuggestionElement('fa-search', suggestion, true);
-                suggestionElement.tabIndex = 2;
-                const target = suggestionElement.querySelector(".tpl-001-li")
-                if (target) {
-                    target.addEventListener('click', () => {
-                        searchInput.value = suggestion;
-                        suggestionsContainer.style.display = 'none';
-                    });
-                } else {
-                    console.error("Failed to get such element by class name: `tpl-001-li`")
-                }
-                suggestionsList.appendChild(target);
+        showProgressBar() {
+            this.progressBar.style.display = 'block';
+        }
+
+        hideProgressBar() {
+            this.progressBar.style.display = 'none';
+        }
+
+        showError() {
+            this.grid.innerHTML = '';
+            const error = this.errorTemplate.content.cloneNode(true);
+            error.querySelector('.artRetryButton').addEventListener('click', () => {
+                this.debouncedFilter(this.lastQuery);
             });
-            // Show the suggestions and reset highlighted index
-            suggestionsContainer.style.display = 'block';
-            currentHighlightedIndex = -1;
+            this.grid.appendChild(error);
         }
 
-        // display suggestions from search history
-        function displaySearchHistory() {
-            displaySuggestions(searchHistory, true);
+        displayArtists(artists) {
+            this.grid.innerHTML = '';
+            artists.forEach(artist => {
+                const div = this.cardTemplate.content.cloneNode(true);
+                const card = div.querySelector('.artCard');
+                const img = card.querySelector('img');
+                const title = card.querySelector('.artCardTitle');
+
+                img.src = artist.image;
+                img.alt = `${artist.name} album cover`;
+                title.textContent = artist.name;
+                card.href = `/details?id=${artist.id}`;
+
+                this.grid.appendChild(card);
+            });
         }
 
-        // add query to search history
-        function addToSearchHistory(item) {
-            if (!searchHistory.includes(item)) {
-                searchHistory.unshift(item);
-                localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        async filter(query) {
+            this.container.scrollIntoView({ behavior: 'smooth' });
+            this.showProgressBar();
+
+            try {
+                // Simulated API call
+                const response = await fetch(`https://groupietrackers.herokuapp.com/api/artists`);
+                // const response = await fetch(`/api/artists?q=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error('Failed to fetch artists');
+
+                const artists = await response.json();
+                this.displayArtists(artists);
+                this.lastQuery = String(query);
+            } catch (error) {
+                this.showError();
+            } finally {
+                this.hideProgressBar();
+            }
+        }
+    }
+
+    // Initialize the container
+    window.GlobalArtistContainer = new ArtistContainer();
+
+    // Load all artists
+    (function () {
+        // Get raw json from the data element
+        const rawJson = document.getElementById('data').textContent;
+
+        // Remove only the first `"` and the last `"`
+        let firstQuoteIndex = rawJson.indexOf('"');
+        let lastQuoteIndex = rawJson.lastIndexOf('"');
+
+        let json = "";
+        if (firstQuoteIndex !== -1 && lastQuoteIndex !== -1 && firstQuoteIndex !== lastQuoteIndex) {
+            json = rawJson.slice(0, firstQuoteIndex) +
+                rawJson.slice(firstQuoteIndex + 1, lastQuoteIndex) +
+                rawJson.slice(lastQuoteIndex + 1);
+        }
+
+        // Get the artists json
+        window.AllArtists = JSON.parse(json);
+        // Display the artists in the artists element section
+        window.GlobalArtistContainer.displayArtists(window.AllArtists);
+    })();
+
+</script>
+
+<!-- Neo Search Bar -->
+<script>
+    // search ranking:
+    //
+    // 1. Elements that match the whole term: score +100
+    // 2. Elements that start with the given term: score +10
+    // 3. Elements that contains the search query: score +2
+    // 4. Elements that end with the search query: score +1
+    function SearchScore(allSuggestions, query, minScore = 2) {
+        const searchScores = [];
+        allSuggestions.forEach((suggestionObject) => {
+            const suggestion = String(suggestionObject.suggestion).toLowerCase();
+            query = String(query).toLowerCase();
+
+            let score = 0;
+            if (suggestion === query) {
+                score += 100;
+            }
+
+            if (suggestion.startsWith(query)) {
+                score += 10;
+            }
+
+            if (suggestion.includes(query)) {
+                score += 2;
+            }
+
+            if (suggestion.endsWith(query)) {
+                score += 1;
+            }
+
+            if (score >= minScore) {
+                searchScores.push({
+                    suggestion: `${suggestion} - ${suggestionObject.from}`,
+                    score: score,
+                    text: suggestion,
+                    from: suggestionObject.from,
+                });
+            }
+        });
+
+        searchScores.sort((a, b) => b.score - a.score);
+        // return searchScores.map((suggestionScore) => suggestionScore.suggestion);
+        return searchScores
+    }
+
+    (function () {
+        const LOCAL_STORAGE_KEY = 'fl-search-history';
+        const MAX_HISTORY_ITEMS = 50;
+
+        // Elements
+        const searchWrapper = document.querySelector('.fl-search-wrapper');
+        const searchBar = document.querySelector('.fl-search-bar');
+        const searchInput = document.querySelector('.fl-search-input');
+        const clearIcon = document.querySelector('.fl-clear-icon');
+        const filterLayout = document.querySelector('.fl-filter-layout');
+        const suggestionsDiv = document.querySelector('.fl-suggestions');
+        const filtersDiv = document.querySelector('.fl-filters');
+
+        // Templates
+        const suggestionTemplate = document.querySelector('#fl-suggestion-template');
+        const filterTemplate = document.querySelector('#fl-filter-template');
+
+        // Filter options
+        const filterOptions = [
+            'filter the artists/bands which the creation date is between "1995" and "2000"',
+            'filter the artists/bands that recorded their first album between "1990" and "1992"',
+            'filter the artists/bands that have exactly "6" members in their band',
+            'filter the artists/bands that have/had concerts in "Texas, USA"',
+            'filter the artists/bands which the creation date is between "1970" and "2000" and have only "1" member (solo artists)',
+            'filter the artists/bands which the creation date is after "2010" and recorded their first album after "2010"',
+            'filter the artists/bands that have/had concerts in "Washington, USA" and have more than 3 members',
+            'filter the artists/bands that recorded their first album between "1980" and "1990" and have a maximum of "4" members'
+        ];
+
+        // Populate filters using template
+        filterOptions.forEach(filter => {
+            const filterElement = filterTemplate.content.cloneNode(true).querySelector('.fl-filter-option');
+            filterElement.textContent = filter;
+            filterElement.onclick = () => handleSubmit({filter});
+            filtersDiv.appendChild(filterElement);
+        });
+
+        // Local Storage Functions
+        function getSearchHistory() {
+            return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+        }
+
+        function addToSearchHistory(query) {
+            const history = getSearchHistory();
+            const index = history.indexOf(query);
+            if (index > -1) {
+                history.splice(index, 1);
+            }
+            history.unshift(query);
+            if (history.length > MAX_HISTORY_ITEMS) {
+                history.pop();
+            }
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(history));
+        }
+
+        function removeFromHistory(query) {
+            const history = getSearchHistory();
+            const index = history.indexOf(query);
+            if (index > -1) {
+                history.splice(index, 1);
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(history));
             }
         }
 
-        // remove query from search history
-        function removeFromSearchHistory(index) {
-            searchHistory.splice(index, 1);
-            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-            displaySearchHistory();
-        }
+        // Search bar click shows suggestions
+        searchBar.addEventListener('click', () => {
+            searchInput.focus();
+            if (!searchInput.value) {
+                showSuggestions('');
+            }
+        });
 
+        // Handle input changes
         searchInput.addEventListener('input', (e) => {
-            const query = e.target.value;
-            fetchSuggestions(query);
+            const value = e.target.value;
+            clearIcon.style.display = value ? 'flex' : 'none';
+            showSuggestions(value);
         });
 
-        searchInput.addEventListener('focus', () => {
-            if (searchInput.value === '') {
-                displaySearchHistory();
+        // Clear input
+        clearIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            searchInput.value = '';
+            clearIcon.style.display = 'none';
+            suggestionsDiv.style.display = 'none';
+            handleSubmit({query: ''});
+        });
+
+        // Toggle filters
+        filterLayout.addEventListener('click', (e) => {
+            e.stopPropagation();
+            filtersDiv.style.display = filtersDiv.style.display === 'block' ? 'none' : 'block';
+            // suggestionsDiv.style.display = 'none';
+        });
+
+        // Show suggestions
+        async function showSuggestions(query) {
+            suggestionsDiv.innerHTML = '';
+
+            let suggestions = [];
+            if (query) {
+                try {
+                    const response = await fetch(`/search-suggestions?q=${encodeURIComponent(query)}`);
+                    if (!response.ok) {
+                        throw new Error('bad server response:' + response.statusText)
+                    }
+                    const json = await response.json();
+                    // console.log('received suggestions:', json)
+                    suggestions = SearchScore(json, query);
+                    suggestions = suggestions.map(s => ({suggestion: s.suggestion, text: s.text, isHistory: false}));
+                    // console.log('commiting suggestions:', suggestions)
+                } catch (e) {
+                    console.error("Failed to fetch:", e)
+                }
             } else {
-                const query = searchInput.value;
-                fetchSuggestions(query);
+                suggestions = getSearchHistory().map(s => ({suggestion: s, text: s, isHistory: true}));
             }
-        });
 
-        searchInput.addEventListener('blur', () => {
-            setTimeout(() => {
-                suggestionsContainer.style.display = 'none';
-            }, 2000);
-        });
+            if (suggestions.length) {
+                suggestions.forEach(suggestion => {
+                    const element = suggestionTemplate.content.cloneNode(true);
+                    const item = element.querySelector('.fl-suggestion-item');
+                    const icon = item.querySelector('.fl-suggestion-icon');
+                    const content = item.querySelector('.fl-suggestion-content');
+                    const removeBtn = item.querySelector('.fl-remove-history');
 
-        // Keyboard navigation
+                    content.textContent = suggestion.suggestion;
+                    icon.classList.add('fas', suggestion.isHistory ? 'fa-history' : 'fa-search');
+                    removeBtn.style.display = suggestion.isHistory ? 'block' : 'none';
+
+                    item.onclick = () => {
+                        searchInput.value = suggestion.text;
+                        suggestionsDiv.style.display = 'none';
+                        handleSubmit({query: suggestion.text});
+                    };
+
+                    if (suggestion.isHistory) {
+                        removeBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            removeFromHistory(suggestion.text);
+                            showSuggestions('');
+                        };
+                    }
+
+                    suggestionsDiv.appendChild(item);
+                });
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        }
+
+        // Handle keyboard navigation
+        let activeIndex = -1;
         searchInput.addEventListener('keydown', (e) => {
-            const suggestions = Array.from(suggestionsList.children);
-
-            function highlightSuggestion(index) {
-                if (currentHighlightedIndex >= 0) {
-                    suggestions[currentHighlightedIndex].classList.remove('highlighted');
-                }
-
-                if (index >= 0 && index < suggestions.length) {
-                    const newSuggestion = suggestions[index];
-                    suggestions[index].classList.add('highlighted');
-                    newSuggestion.scrollIntoView({behavior: "smooth", block: 'nearest', inline: 'start'})
-                }
-                currentHighlightedIndex = index;
-            }
+            const suggestions = document.querySelectorAll('.fl-suggestion-item');
 
             if (e.key === 'ArrowDown') {
-                // Prevent default behavior (e.g., moving cursor to end of input)
-                e.preventDefault();
-                const nextIndex = (currentHighlightedIndex + 1) % suggestions.length;
-                highlightSuggestion(nextIndex);
+                e.preventDefault()
+                activeIndex = Math.min(activeIndex + 1, suggestions.length - 1);
+                updateActiveSuggestion(suggestions);
             } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                const prevIndex = (currentHighlightedIndex - 1 + suggestions.length) % suggestions.length;
-                highlightSuggestion(prevIndex);
+                e.preventDefault()
+                activeIndex = Math.max(activeIndex - 1, -1);
+                updateActiveSuggestion(suggestions);
             } else if (e.key === 'Enter') {
-                if (currentHighlightedIndex >= 0) {
-                    // e.preventDefault();
-                    const selectedSuggestion = suggestions[currentHighlightedIndex];
-                    const suggestionSpan = selectedSuggestion.querySelector("span span");
-                    const suggestion = suggestionSpan.textContent;
-                    searchInput.value = suggestion;
-                    addToSearchHistory(suggestion);
-                    suggestionsContainer.style.display = 'none';
-                    searchInput.focus();
+                if (activeIndex >= 0) {
+                    e.preventDefault()
+                    suggestions[activeIndex].click();
+                } else if (searchInput.value) {
+                    handleSubmit({query: searchInput.value});
                 }
             }
         });
-    }
 
-    _searchBarSuggestions();
+        function updateActiveSuggestion(suggestions) {
+            suggestions.forEach(s => s.classList.remove('active'));
+            if (activeIndex >= 0) {
+                suggestions[activeIndex].classList.add('active');
+                suggestions[activeIndex].scrollIntoView({block: "nearest", inline: "nearest"});
+            }
+        }
+
+        // Close suggestions and filters when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchWrapper.contains(e.target)) {
+                suggestionsDiv.style.display = 'none';
+                filtersDiv.style.display = 'none';
+            }
+        });
+
+        // Handle search submit
+        function handleSubmit({query = '', filter = ''}) {
+            if (query) {
+                addToSearchHistory(query);
+            }
+            console.log('Searching with:', {query, filter});
+            // Implementation would go here
+        }
+    })();
 </script>
-
-
-<!-- Search bar filters -->
-<!--<script>-->
-<!--    // Mock Data-->
-<!--    const artists = Array.from({length: 50}, (_, i) => ({-->
-<!--        id: i + 1,-->
-<!--        name: `Artist ${i + 1}`,-->
-<!--        creationDate: Math.floor(Math.random() * (2020 - 1970 + 1)) + 1970,-->
-<!--        firstAlbumYear: Math.floor(Math.random() * (2020 - 1980 + 1)) + 1980,-->
-<!--        members: Math.floor(Math.random() * 10) + 1,-->
-<!--        concertLocation: ['Texas, USA', 'Washington, USA', 'California, USA'][Math.floor(Math.random() * 3)],-->
-<!--        image: `https://via.placeholder.com/150?text=Artist+${i + 1}`-->
-<!--    }));-->
-
-<!--    // DOM Elements-->
-<!--    const searchInput = document.getElementById('search-input');-->
-<!--    const filterToggle = document.getElementById('filter-toggle');-->
-<!--    const filters = document.getElementById('filters');-->
-<!--    const progress = document.getElementById('progress');-->
-<!--    const results = document.getElementById('results');-->
-
-<!--    // Event Listeners-->
-<!--    filterToggle.addEventListener('click', () => {-->
-<!--        filters.style.display = filters.style.display === 'none' ? 'block' : 'none';-->
-<!--    });-->
-
-<!--    searchInput.addEventListener('input', () => {-->
-<!--        showSuggestions();-->
-<!--        filterArtists();-->
-<!--    });-->
-
-<!--    document.addEventListener('keydown', (e) => {-->
-<!--        if (e.ctrlKey && e.key === 'k') {-->
-<!--            e.preventDefault();-->
-<!--            searchInput.focus();-->
-<!--        }-->
-<!--        if (e.ctrlKey && e.shiftKey && e.key === 'F') {-->
-<!--            e.preventDefault();-->
-<!--            searchInput.focus();-->
-<!--            filters.style.display = 'block';-->
-<!--        }-->
-<!--    });-->
-
-<!--    // Filter Artists-->
-<!--    function filterArtists() {-->
-<!--        progress.style.display = 'block';-->
-<!--        results.innerHTML = '';-->
-
-<!--        setTimeout(() => {-->
-<!--            const searchTerm = searchInput.value.toLowerCase();-->
-<!--            const creationDateMin = parseInt(document.getElementById('creation-date-min').value) || 0;-->
-<!--            const creationDateMax = parseInt(document.getElementById('creation-date-max').value) || Infinity;-->
-<!--            const albumYearMin = parseInt(document.getElementById('album-year-min').value) || 0;-->
-<!--            const albumYearMax = parseInt(document.getElementById('album-year-max').value) || Infinity;-->
-<!--            const membersCount = parseInt(document.getElementById('members-count').value) || 0;-->
-<!--            const concertLocation = document.getElementById('concert-location').value.toLowerCase();-->
-
-<!--            const filteredArtists = artists.filter(artist => {-->
-<!--                return (-->
-<!--                    artist.name.toLowerCase().includes(searchTerm) &&-->
-<!--                    artist.creationDate >= creationDateMin &&-->
-<!--                    artist.creationDate <= creationDateMax &&-->
-<!--                    artist.firstAlbumYear >= albumYearMin &&-->
-<!--                    artist.firstAlbumYear <= albumYearMax &&-->
-<!--                    (membersCount === 0 || artist.members === membersCount) &&-->
-<!--                    (concertLocation === '' || artist.concertLocation.toLowerCase().includes(concertLocation))-->
-<!--                );-->
-<!--            });-->
-
-<!--            displayResults(filteredArtists);-->
-<!--            progress.style.display = 'none';-->
-<!--        }, 500);-->
-<!--    }-->
-
-<!--    // Display Results-->
-<!--    function displayResults(filteredArtists) {-->
-<!--        if (filteredArtists.length === 0) {-->
-<!--            results.innerHTML = '<p>No artists found.</p>';-->
-<!--            return;-->
-<!--        }-->
-
-<!--        results.innerHTML = filteredArtists.map(artist => `-->
-<!--        <div class="artist-card">-->
-<!--          <img src="${artist.image}" alt="${artist.name}">-->
-<!--          <h3>${artist.name}</h3>-->
-<!--        </div>-->
-<!--      `).join('');-->
-<!--    }-->
-
-<!--    // Show Search Suggestions-->
-<!--    function showSuggestions() {-->
-<!--        // Implement search suggestions logic here-->
-<!--    }-->
-
-<!--    // Initial Render-->
-<!--    filterArtists();-->
-<!--</script>-->
 
 </body>
 </html>
