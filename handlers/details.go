@@ -45,7 +45,7 @@ func DetailsHandler(w http.ResponseWriter, r *http.Request) {
 	data, err := api.GetAllDetails(ID)
 	log.Printf("Found err: %v\n", err)
 	if errors.Is(err, xerrors.ErrNotFound) {
-		RenderErrorPage(w, "Not Found!", http.StatusNotFound)
+		RenderErrorPage(w, "The artist id entered is out of range!", http.StatusNotFound)
 		return
 	} else if err != nil {
 		RenderErrorPage(w, "Internal Server Error!", http.StatusInternalServerError)
