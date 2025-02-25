@@ -26,7 +26,7 @@
     </div>
 </div>
 
-<button id="filter-button" onclick="toggleFilters()">Click here to filter</button>
+<a href="/filter"><button id="filter-button">Click here to filter</button></a>
 <div class="filter-container" id="filter-container">
     <h3>Filters</h3>
     <label for="creation-date">Creation Date:</label>
@@ -84,6 +84,7 @@
         const filterContainer = document.getElementById('filter-container');
         filterContainer.style.display = filterContainer.style.display === 'none' || filterContainer.style.display === '' ? 'block' : 'none';
     }
+
 
     function updateValue(sliderId, valueId) {
         const slider = document.getElementById(sliderId);
